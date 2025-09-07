@@ -46,12 +46,9 @@ button:disabled{opacity:.6;cursor:default}
 </div>
 
 <div id="quizContainer" style="display:none">
-  <div class="controls">
-    <button onclick="resetFlow()">🔄 Resetar</button>
-  </div>
   <div id="score">Pontuação: 0</div>
   <div class="container">
-    <div class="flowchart" aria-hidden="true">
+    <div class="flowchart">
       <div class="step" data-id="inicio" style="top:0; left:110px"><div class="symbol startend" onmouseenter="showTooltip('inicio', event)" onmouseleave="hideTooltip()">Início</div></div>
       <div class="step" data-id="entrada" style="top:80px; left:110px"><div class="symbol input" onmouseenter="showTooltip('entrada', event)" onmouseleave="hideTooltip()">Entrada</div></div>
       <div class="step" data-id="processo" style="top:160px; left:110px"><div class="symbol process" onmouseenter="showTooltip('processo', event)" onmouseleave="hideTooltip()">Processo</div></div>
@@ -66,19 +63,11 @@ button:disabled{opacity:.6;cursor:default}
     <div class="symbol-info" id="symbolInfo"></div>
 
     <div id="question-area">
-      <!-- Perguntas do quiz -->
       <div class="question-box" id="q1"><p>Qual símbolo representa <strong>entrada/saída</strong> de dados?</p>
         <button class="answer" onclick="checkAnswer('q1','paralelogramo', this)">Paralelogramo</button>
         <button class="answer" onclick="checkAnswer('q1','losango', this)">Losango</button>
         <div class="feedback"></div>
       </div>
-      <div class="question-box" id="q2"><p>Qual símbolo é usado para um <strong>processo/ação</strong>?</p>
-        <button class="answer" onclick="checkAnswer('q2','retangulo', this)">Retângulo</button>
-        <button class="answer" onclick="checkAnswer('q2','circulo', this)">Círculo</button>
-        <div class="feedback"></div>
-      </div>
-      <!-- Outras perguntas podem ser adicionadas aqui igual ao código anterior -->
-
       <div class="question-box final" id="finalBox">
         <h3>🎉 Fim do Quiz</h3>
         <p id="finalScore"></p>
@@ -88,12 +77,11 @@ button:disabled{opacity:.6;cursor:default}
   </div>
 </div>
 
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getDatabase, ref, push, get, query, orderByChild } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+import { getDatabase, ref, push, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-// Config Firebase
+// Config Firebase (aponta para raiz do DB)
 const firebaseConfig = {
   apiKey: "AIzaSyDzUMFgs90Kuh0TDQ8zUT0-10bMnv1CAG8",
   authDomain: "quiz-fluxograma.firebaseapp.com",
@@ -103,20 +91,15 @@ const firebaseConfig = {
   messagingSenderId: "535442125816",
   appId: "1:535442125816:web:998bdad39c50d068885c0d"
 };
-
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Quiz variables
-let score = 0;
-let currentStep = 1;
-let startTime, userName;
+// Quiz vars
+let score=0, currentStep=1, startTime, userName;
+const steps=["inicio","entrada","processo","decisao","documento","db","subprocesso","conector","preparacao","fim"];
+const stepQuestions={entrada:"q1"};
+const correct={q1:"paralelogramo"};
 
-const steps = ["inicio","entrada","processo","decisao","documento","db","subprocesso","conector","preparacao","fim"];
-const stepQuestions = {entrada:"q1",processo:"q2"};
-const correct = {q1:"paralelogramo", q2:"retangulo"};
-
-// Funções básicas
 function updateScore(){document.getElementById("score").innerText="Pontuação: "+score;}
 function startFlow(){currentStep=1;highlightNext();}
 function nextStep(){currentStep++;highlightNext();}
@@ -144,67 +127,59 @@ function checkAnswer(qId,ans,btn){
   else{feedback.innerText="❌ Incorreto!";}
   setTimeout(()=>{qBox.style.display="none";nextStep();},300);
 }
-function resetFlow(){
-  score=0;updateScore();currentStep=1;
-  document.querySelectorAll(".symbol").forEach(s=>s.classList.remove("highlight","correct","incorrect"));
-  document.querySelectorAll(".question-box").forEach(q=>q.style.display="none");
-  document.getElementById("finalBox").style.display="none";
-  startTime = new Date().getTime();
-}
+function resetFlow(){score=0;updateScore();currentStep=1;document.querySelectorAll(".symbol").forEach(s=>s.classList.remove("highlight"));document.querySelectorAll(".question-box").forEach(q=>q.style.display="none");document.getElementById("finalBox").style.display="none";startTime=new Date().getTime();}
 
 // Nome obrigatório
 function startQuiz(){
-  const nameInput = document.getElementById("userName").value.trim();
+  const nameInput=document.getElementById("userName").value.trim();
   if(!nameInput){document.getElementById("nameError").innerText="Nome obrigatório!"; return;}
   userName=nameInput;
   document.getElementById("nameError").innerText="";
   document.getElementById("userNameDiv").style.display="none";
   document.getElementById("quizContainer").style.display="block";
-  startTime = new Date().getTime();
+  startTime=new Date().getTime();
   startFlow();
 }
 
 // Tooltip
-const tooltip = document.getElementById("symbolInfo");
-function showTooltip(simboloId, event){
-  const info = {
-    inicio:{titulo:"Início/Fim",descricao:"Indica o ponto inicial ou final do fluxograma.",exemplo:"Ex: Início do processo."},
-    entrada:{titulo:"Entrada/Paralelogramo",descricao:"Representa entrada/saída de dados.",exemplo:"Ex: Digitar nome do usuário."},
-    processo:{titulo:"Processo/Retângulo",descricao:"Representa ação.",exemplo:"Ex: Calcular média."},
-    decisao:{titulo:"Decisão/Losango",descricao:"Representa decisão.",exemplo:"Ex: Usuário cadastrado?"},
-    documento:{titulo:"Documento",descricao:"Indica documento.",exemplo:"Ex: Gerar relatório."},
-    db:{titulo:"Banco de Dados/Cilindro",descricao:"Indica armazenamento.",exemplo:"Ex: Salvar usuário."},
+const tooltip=document.getElementById("symbolInfo");
+function showTooltip(id,e){
+  const info={
+    inicio:{titulo:"Início/Fim",descricao:"Ponto inicial ou final.",exemplo:"Ex: Início do processo."},
+    entrada:{titulo:"Entrada/Paralelogramo",descricao:"Entrada/saída de dados.",exemplo:"Ex: Digitar nome do usuário."},
+    processo:{titulo:"Processo",descricao:"Ação.",exemplo:"Ex: Calcular média."},
+    decisao:{titulo:"Decisão",descricao:"Tomada de decisão.",exemplo:"Ex: Usuário cadastrado?"},
+    documento:{titulo:"Documento",descricao:"Documento.",exemplo:"Ex: Gerar relatório."},
+    db:{titulo:"Banco de Dados",descricao:"Armazenamento.",exemplo:"Ex: Salvar usuário."},
     subprocesso:{titulo:"Subprocesso",descricao:"Subprocesso.",exemplo:"Ex: Validar dados."},
     conector:{titulo:"Conector",descricao:"Liga partes do fluxograma.",exemplo:"Ex: Continuar fluxo."},
-    preparacao:{titulo:"Preparação/Hexágono",descricao:"Preparação.",exemplo:"Ex: Preparar sistema."},
+    preparacao:{titulo:"Preparação",descricao:"Setup.",exemplo:"Ex: Preparar sistema."},
     fim:{titulo:"Fim",descricao:"Final do processo.",exemplo:"Ex: Fim do cadastro."}
-  }[simboloId];
+  }[id];
   tooltip.innerHTML=`<strong>${info.titulo}</strong><br>${info.descricao}<br><em>${info.exemplo}</em>`;
-  const rect=event.target.getBoundingClientRect();
+  const rect=e.target.getBoundingClientRect();
   tooltip.style.top=(rect.top+window.scrollY)+"px";
   tooltip.style.left=(rect.right+10+window.scrollX)+"px";
   tooltip.classList.add("show");
 }
 function hideTooltip(){tooltip.classList.remove("show");}
 
-// Ranking Firebase
+// Final & Ranking
 function showFinal(){
-  const endTime = new Date().getTime();
-  const tempo = Math.floor((endTime - startTime)/1000);
+  const endTime=new Date().getTime();
+  const tempo=Math.floor((endTime-startTime)/1000);
   document.getElementById("finalScore").innerText=`Sua pontuação final: ${score}`;
   document.getElementById("finalBox").style.display="block";
 
-  // Salvar no Firebase
+  // Salvar ranking no Firebase
   const pontRef = ref(db,'ranking');
   push(pontRef,{nome:userName,pontuacao:score,tempo:tempo,timestamp:Date.now()});
 
   // Mostrar top 10
-  const rankingDiv = document.getElementById("ranking");
   get(ref(db,'ranking')).then(snapshot=>{
     if(snapshot.exists()){
-      const dados = Object.values(snapshot.val())
-        .sort((a,b)=>b.pontuacao - a.pontuacao)
-        .slice(0,10);
+      const dados=Object.values(snapshot.val()).sort((a,b)=>b.pontuacao-a.pontuacao).slice(0,10);
+      const rankingDiv=document.getElementById("ranking");
       rankingDiv.innerHTML="<h4>🏆 Ranking Global</h4>"+dados.map((u,i)=>`${i+1}. ${u.nome} - ${u.pontuacao} pts (${u.tempo}s)`).join("<br>");
     }
   });
