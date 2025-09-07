@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Quiz Fluxograma - Revisado</title>
+<title>Quiz Fluxograma - Local</title>
 <style>
   :root{--bg:#1e1e2f;--card:#2c2c3c;--accent:#ffeb3b}
   body{margin:16px;font-family:Arial,sans-serif;background:var(--bg);color:#fff}
@@ -15,11 +15,15 @@
   .container{display:flex;justify-content:center;align-items:flex-start;gap:20px}
   .flowchart{width:360px;position:relative;border-radius:8px;padding:14px;background:var(--card);min-height:1250px}
   .step{position:absolute;width:140px;display:flex;flex-direction:column;align-items:center;left:110px}
-  .symbol{width:140px;height:60px;display:flex;align-items:center;justify-content:center;font-weight:700;border-radius:10px;color:#fff;cursor:pointer;transition:transform .18s,box-shadow .18s,outline .15s}
+  .symbol{width:140px;height:60px;display:flex;align-items:center;justify-content:center;font-weight:700;border-radius:10px;color:#fff;cursor:pointer;transition:transform .18s,box-shadow .18s,outline .15s;position:relative}
   .symbol:hover{transform:translateY(-3px)}
   .symbol.highlight{box-shadow:0 0 0 6px rgba(255,235,59,0.08)}
   .symbol.correct{outline:4px solid rgba(76,175,80,0.45)}
   .symbol.incorrect{outline:4px solid rgba(244,67,54,0.45)}
+  /* Hints */
+  .symbol::after{content:attr(data-hint);position:absolute;bottom:110%;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#fff;padding:8px;border-radius:6px;font-size:13px;width:180px;text-align:center;opacity:0;pointer-events:none;transition:opacity .3s}
+  .symbol:hover::after{opacity:1}
+  /* Formatos */
   .symbol.startend{background:#ff9800;border-radius:36px}
   .symbol.input{background:#f06292;clip-path:polygon(15% 0,100% 0,85% 100%,0% 100%)}
   .symbol.process{background:#42a5f5}
@@ -32,8 +36,6 @@
   .symbol.subprocesso::after{content:"";position:absolute;inset:6px;border:2px solid rgba(255,255,255,0.18);border-radius:6px}
   .symbol.conector{background:#9ccc65;border-radius:50%;width:60px;height:60px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#092400}
   .symbol.preparacao{background:#26c6da;clip-path:polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%)}
-  .symbol-info{position:absolute;background:rgba(0,0,0,0.85);color:#fff;padding:10px;border-radius:8px;font-size:14px;width:220px;display:none;z-index:50;pointer-events:none;opacity:0}
-  .symbol-info.show{display:block;opacity:1}
   .arrow{width:4px;height:60px;margin-top:8px;background:#fff;transform:scaleY(0);transform-origin:top;transition:transform .35s,background .2s,opacity .2s;opacity:.25;border-radius:2px}
   .arrow.active{transform:scaleY(1);background:var(--accent);opacity:1}
   #question-area{width:320px;background:rgba(0,0,0,0.55);padding:16px;border-radius:10px}
@@ -62,19 +64,40 @@
   <div id="score">Pontuação: 0</div>
   <div class="container">
     <div class="flowchart">
-      <div class="step" data-id="inicio" style="top:10px;left:110px"><div class="symbol startend">Início</div><div class="arrow"></div></div>
-      <div class="step" data-id="entrada" style="top:120px;left:110px"><div class="symbol input">Entrada</div><div class="arrow"></div></div>
-      <div class="step" data-id="processo" style="top:240px;left:110px"><div class="symbol process">Processo</div><div class="arrow"></div></div>
-      <div class="step" data-id="decisao" style="top:360px;left:110px"><div class="symbol decision">Decisão</div><div class="arrow"></div></div>
-      <div class="step" data-id="documento" style="top:480px;left:110px"><div class="symbol document">Documento</div><div class="arrow"></div></div>
-      <div class="step" data-id="db" style="top:600px;left:110px"><div class="symbol database">Banco</div><div class="arrow"></div></div>
-      <div class="step" data-id="subprocesso" style="top:720px;left:110px"><div class="symbol subprocesso">Subprocesso</div><div class="arrow"></div></div>
-      <div class="step" data-id="conector" style="top:840px;left:125px"><div class="symbol conector">C</div><div class="arrow"></div></div>
-      <div class="step" data-id="preparacao" style="top:960px;left:110px"><div class="symbol preparacao">Preparação</div><div class="arrow"></div></div>
-      <div class="step" data-id="fim" style="top:1080px;left:110px"><div class="symbol startend">Fim</div></div>
+      <div class="step" data-id="inicio" style="top:10px;left:110px">
+        <div class="symbol startend" data-hint="Início/Fim: indica o começo ou término do processo.">Início</div><div class="arrow"></div>
+      </div>
+      <div class="step" data-id="entrada" style="top:120px;left:110px">
+        <div class="symbol input" data-hint="Entrada/Saída: usado para representar dados que entram ou saem.">Entrada</div><div class="arrow"></div>
+      </div>
+      <div class="step" data-id="processo" style="top:240px;left:110px">
+        <div class="symbol process" data-hint="Processo: representa uma ação ou tarefa.">Processo</div><div class="arrow"></div>
+      </div>
+      <div class="step" data-id="decisao" style="top:360px;left:110px">
+        <div class="symbol decision" data-hint="Decisão: indica um ponto de escolha (sim/não, verdadeiro/falso).">Decisão</div><div class="arrow"></div>
+      </div>
+      <div class="step" data-id="documento" style="top:480px;left:110px">
+        <div class="symbol document" data-hint="Documento: mostra um registro ou relatório gerado.">Documento</div><div class="arrow"></div>
+      </div>
+      <div class="step" data-id="db" style="top:600px;left:110px">
+        <div class="symbol database" data-hint="Banco de Dados: indica armazenamento permanente de dados.">Banco</div><div class="arrow"></div>
+      </div>
+      <div class="step" data-id="subprocesso" style="top:720px;left:110px">
+        <div class="symbol subprocesso" data-hint="Subprocesso: chama outro processo dentro do principal.">Subprocesso</div><div class="arrow"></div>
+      </div>
+      <div class="step" data-id="conector" style="top:840px;left:125px">
+        <div class="symbol conector" data-hint="Conector: liga partes diferentes do fluxograma.">C</div><div class="arrow"></div>
+      </div>
+      <div class="step" data-id="preparacao" style="top:960px;left:110px">
+        <div class="symbol preparacao" data-hint="Preparação: indica a inicialização de algo (configuração).">Preparação</div><div class="arrow"></div>
+      </div>
+      <div class="step" data-id="fim" style="top:1080px;left:110px">
+        <div class="symbol startend" data-hint="Fim: encerra o processo.">Fim</div>
+      </div>
     </div>
 
     <div id="question-area">
+      <!-- Perguntas (iguais ao anterior, sem mudanças) -->
       <div class="question-box" id="q1"><p>Qual símbolo representa <strong>entrada/saída</strong>?</p>
         <button class="answer" onclick="checkAnswer('q1','paralelogramo', this)">Paralelogramo</button>
         <button class="answer" onclick="checkAnswer('q1','losango', this)">Losango</button>
@@ -117,7 +140,7 @@
   const steps=["inicio","entrada","processo","decisao","documento","db","subprocesso","conector","preparacao","fim"];
   const stepQuestions={entrada:"q1",processo:"q2",decisao:"q3",documento:"q4",db:"q5",subprocesso:"q6",conector:"q7",preparacao:"q8"};
   const correct={q1:"paralelogramo",q2:"retangulo",q3:"losango",q4:"documento",q5:"cilindro",q6:"retangulo-duplo",q7:"circulo",q8:"hexagono"};
-  let localRanking=[];
+  let localRanking=JSON.parse(localStorage.getItem("quizRanking")||"[]");
 
   function updateScore(){document.getElementById("score").innerText="Pontuação: "+score;}
   function startFlow(){currentStep=1;startTime=new Date().getTime();nextStep();}
@@ -158,6 +181,7 @@
     const duration=Math.floor((endTime-startTime)/1000);
     localRanking.push({nome:userName,pontuacao:score,tempo:duration});
     localRanking.sort((a,b)=>b.pontuacao-a.pontuacao);
+    localStorage.setItem("quizRanking",JSON.stringify(localRanking));
     document.getElementById("ranking").innerHTML="<strong>🏆 Ranking Local</strong><br>"+localRanking.slice(0,10).map(d=>`${d.nome}: ${d.pontuacao} pts`).join("<br>");
   }
   document.getElementById("btnStartQuiz").addEventListener("click",()=>{
