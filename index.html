@@ -2,196 +2,242 @@
 <html lang="pt-BR">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Quiz Fluxograma - Local</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prática de Fluxograma</title>
 <style>
-  :root{--bg:#1e1e2f;--card:#2c2c3c;--accent:#ffeb3b}
-  body{margin:16px;font-family:Arial,sans-serif;background:var(--bg);color:#fff}
-  h1{text-align:center;color:var(--accent);margin-bottom:18px}
-  #userNameDiv{text-align:center;margin-bottom:16px}
-  #userName{padding:8px 12px;border-radius:6px;border:none;margin-right:8px;width:200px}
-  button{padding:8px 12px;margin:4px;border:none;border-radius:6px;background:#1976d2;color:#fff;cursor:pointer}
-  button:disabled{opacity:.6;cursor:default}
-  .container{display:flex;justify-content:center;align-items:flex-start;gap:20px}
-  .flowchart{width:360px;position:relative;border-radius:8px;padding:14px;background:var(--card);min-height:1250px}
-  .step{position:absolute;width:140px;display:flex;flex-direction:column;align-items:center;left:110px}
-  .symbol{width:140px;height:60px;display:flex;align-items:center;justify-content:center;font-weight:700;border-radius:10px;color:#fff;cursor:pointer;transition:transform .18s,box-shadow .18s,outline .15s;position:relative}
-  .symbol:hover{transform:translateY(-3px)}
-  .symbol.highlight{box-shadow:0 0 0 6px rgba(255,235,59,0.08)}
-  .symbol.correct{outline:4px solid rgba(76,175,80,0.45)}
-  .symbol.incorrect{outline:4px solid rgba(244,67,54,0.45)}
-  /* Hints */
-  .symbol::after{content:attr(data-hint);position:absolute;bottom:110%;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#fff;padding:8px;border-radius:6px;font-size:13px;width:180px;text-align:center;opacity:0;pointer-events:none;transition:opacity .3s}
-  .symbol:hover::after{opacity:1}
-  /* Formatos */
-  .symbol.startend{background:#ff9800;border-radius:36px}
-  .symbol.input{background:#f06292;clip-path:polygon(15% 0,100% 0,85% 100%,0% 100%)}
-  .symbol.process{background:#42a5f5}
-  .symbol.decision{background:#66bb6a;clip-path:polygon(50% 0,100% 50%,50% 100%,0% 50%)}
-  .symbol.document{background:#ffe082;color:#000;border-radius:6px 6px 16px 6px}
-  .symbol.database{background:linear-gradient(180deg,#9575cd,#7e57c2);border-radius:50%/20%;height:70px;width:140px;position:relative}
-  .symbol.database::before{content:"";position:absolute;left:10px;right:10px;top:-12px;height:18px;border-radius:50%;background:rgba(255,255,255,0.12)}
-  .symbol.database::after{content:"";position:absolute;left:10px;right:10px;bottom:-12px;height:18px;border-radius:50%;background:rgba(0,0,0,0.12)}
-  .symbol.subprocesso{background:#ff7043;border-radius:10px;position:relative;padding:4px 6px}
-  .symbol.subprocesso::after{content:"";position:absolute;inset:6px;border:2px solid rgba(255,255,255,0.18);border-radius:6px}
-  .symbol.conector{background:#9ccc65;border-radius:50%;width:60px;height:60px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#092400}
-  .symbol.preparacao{background:#26c6da;clip-path:polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%)}
-  .arrow{width:4px;height:60px;margin-top:8px;background:#fff;transform:scaleY(0);transform-origin:top;transition:transform .35s,background .2s,opacity .2s;opacity:.25;border-radius:2px}
-  .arrow.active{transform:scaleY(1);background:var(--accent);opacity:1}
-  #question-area{width:320px;background:rgba(0,0,0,0.55);padding:16px;border-radius:10px}
-  .question-box{display:none;margin-bottom:16px}
-  .question-box p{margin-bottom:12px;font-size:16px}
-  .question-box .answer{display:inline-block;padding:8px 14px;margin:6px;border-radius:8px;border:none;background:#1976d2;color:#fff;cursor:pointer}
-  .question-box .answer:disabled{opacity:.6;cursor:default}
-  .feedback{margin-top:10px;font-weight:700;font-size:15px}
-  .final{background:linear-gradient(90deg,#263238,#37474f);padding:18px;border-radius:10px;text-align:center;margin-top:20px}
-  #ranking{margin-top:10px;text-align:center}
-  #score{font-weight:600;margin:10px 0}
-  @media(max-width:900px){.container{flex-direction:column;align-items:center}.flowchart{width:90%;min-height:1200px}}
+body { font-family: Arial, sans-serif; background:#1e1e2f; color:#fff; margin:20px; }
+h1 { text-align:center; color:#ffeb3b; margin-bottom:20px; }
+#topBar { text-align:center; margin-bottom:20px; }
+#question-area { background:#2c2c3c; padding:16px; border-radius:10px; max-width:1000px; margin:auto; display:flex; flex-direction:column; gap:12px; }
+.question-box { display:flex; justify-content:space-between; align-items:center; flex-wrap:nowrap; gap:12px; }
+button { margin:0 6px; padding:10px 16px; border:none; border-radius:6px; background:#1976d2; color:#fff; cursor:pointer; font-size:16px; transition: transform 0.2s; }
+button:hover { transform: scale(1.05); }
+.hint-box { background:#444; padding:14px; border-radius:8px; width:50%; font-size:16px; }
+.symbol-img { text-align:center; width:140px; }
+.symbol-img svg { width:100%; height:auto; }
+.symbol-active { filter: drop-shadow(0 0 15px #ffeb3b) brightness(1.3); transform: scale(1.15); transition: 0.5s; }
+.symbol-correct { filter: drop-shadow(0 0 15px #00ff00) brightness(1.2); transform: scale(1.1); }
+.symbol-wrong { filter: drop-shadow(0 0 15px #ff0000) brightness(1.2); transform: scale(1.1); }
+.clearfix::after { content:""; display:block; clear:both; }
+#history { background:#333; padding:10px; border-radius:8px; margin-top:20px; font-size:14px; }
+#quizCount { margin-top:10px; font-weight:bold; font-size:16px; }
+input { padding:10px 14px; border-radius:6px; border:none; margin-right:10px; font-size:16px; }
+#btnRestart { background:#43a047; margin-top:10px; }
+#exampleFlowchart { position:relative; margin:auto; max-width:1000px; min-height:800px; background:#2c2c3c; border-radius:10px; padding:20px; overflow:visible; }
+.flow-node { position:absolute; text-align:center; width:140px; }
+.flow-node svg { width:100%; height:auto; }
 </style>
 </head>
 <body>
 
-<h1>Quiz do Fluxograma — Local</h1>
+<h1>Prática de Fluxograma</h1>
 
-<div id="userNameDiv">
+<div id="topBar">
   <input type="text" id="userName" placeholder="Digite seu nome">
   <button id="btnStartQuiz">Iniciar Quiz</button>
-  <p id="nameError" style="color:#ff8a80;"></p>
+  <div id="quizCount"></div>
 </div>
 
-<div id="quizContainer" style="display:none">
-  <div id="score">Pontuação: 0</div>
-  <div class="container">
-    <div class="flowchart">
-      <div class="step" data-id="inicio" style="top:10px;left:110px">
-        <div class="symbol startend" data-hint="Início/Fim: indica o começo ou término do processo.">Início</div><div class="arrow"></div>
-      </div>
-      <div class="step" data-id="entrada" style="top:120px;left:110px">
-        <div class="symbol input" data-hint="Entrada/Saída: usado para representar dados que entram ou saem.">Entrada</div><div class="arrow"></div>
-      </div>
-      <div class="step" data-id="processo" style="top:240px;left:110px">
-        <div class="symbol process" data-hint="Processo: representa uma ação ou tarefa.">Processo</div><div class="arrow"></div>
-      </div>
-      <div class="step" data-id="decisao" style="top:360px;left:110px">
-        <div class="symbol decision" data-hint="Decisão: indica um ponto de escolha (sim/não, verdadeiro/falso).">Decisão</div><div class="arrow"></div>
-      </div>
-      <div class="step" data-id="documento" style="top:480px;left:110px">
-        <div class="symbol document" data-hint="Documento: mostra um registro ou relatório gerado.">Documento</div><div class="arrow"></div>
-      </div>
-      <div class="step" data-id="db" style="top:600px;left:110px">
-        <div class="symbol database" data-hint="Banco de Dados: indica armazenamento permanente de dados.">Banco</div><div class="arrow"></div>
-      </div>
-      <div class="step" data-id="subprocesso" style="top:720px;left:110px">
-        <div class="symbol subprocesso" data-hint="Subprocesso: chama outro processo dentro do principal.">Subprocesso</div><div class="arrow"></div>
-      </div>
-      <div class="step" data-id="conector" style="top:840px;left:125px">
-        <div class="symbol conector" data-hint="Conector: liga partes diferentes do fluxograma.">C</div><div class="arrow"></div>
-      </div>
-      <div class="step" data-id="preparacao" style="top:960px;left:110px">
-        <div class="symbol preparacao" data-hint="Preparação: indica a inicialização de algo (configuração).">Preparação</div><div class="arrow"></div>
-      </div>
-      <div class="step" data-id="fim" style="top:1080px;left:110px">
-        <div class="symbol startend" data-hint="Fim: encerra o processo.">Fim</div>
-      </div>
-    </div>
+<div id="question-area"></div>
 
-    <div id="question-area">
-      <!-- Perguntas (iguais ao anterior, sem mudanças) -->
-      <div class="question-box" id="q1"><p>Qual símbolo representa <strong>entrada/saída</strong>?</p>
-        <button class="answer" onclick="checkAnswer('q1','paralelogramo', this)">Paralelogramo</button>
-        <button class="answer" onclick="checkAnswer('q1','losango', this)">Losango</button>
-        <div class="feedback"></div></div>
-      <div class="question-box" id="q2"><p>Qual símbolo é usado para um <strong>processo</strong>?</p>
-        <button class="answer" onclick="checkAnswer('q2','retangulo', this)">Retângulo</button>
-        <button class="answer" onclick="checkAnswer('q2','circulo', this)">Círculo</button>
-        <div class="feedback"></div></div>
-      <div class="question-box" id="q3"><p>Qual símbolo representa uma <strong>decisão</strong>?</p>
-        <button class="answer" onclick="checkAnswer('q3','losango', this)">Losango</button>
-        <button class="answer" onclick="checkAnswer('q3','elipse', this)">Elipse</button>
-        <div class="feedback"></div></div>
-      <div class="question-box" id="q4"><p>Qual símbolo indica um <strong>documento</strong>?</p>
-        <button class="answer" onclick="checkAnswer('q4','documento', this)">Documento</button>
-        <button class="answer" onclick="checkAnswer('q4','processo', this)">Processo</button>
-        <div class="feedback"></div></div>
-      <div class="question-box" id="q5"><p>Qual símbolo indica um <strong>banco de dados</strong>?</p>
-        <button class="answer" onclick="checkAnswer('q5','cilindro', this)">Cilindro</button>
-        <button class="answer" onclick="checkAnswer('q5','losango', this)">Losango</button>
-        <div class="feedback"></div></div>
-      <div class="question-box" id="q6"><p>Qual símbolo indica um <strong>subprocesso</strong>?</p>
-        <button class="answer" onclick="checkAnswer('q6','retangulo-duplo', this)">Retângulo duplo</button>
-        <button class="answer" onclick="checkAnswer('q6','paralelogramo', this)">Paralelogramo</button>
-        <div class="feedback"></div></div>
-      <div class="question-box" id="q7"><p>Qual símbolo é usado como <strong>conector</strong>?</p>
-        <button class="answer" onclick="checkAnswer('q7','circulo', this)">Círculo</button>
-        <button class="answer" onclick="checkAnswer('q7','losango', this)">Losango</button>
-        <div class="feedback"></div></div>
-      <div class="question-box" id="q8"><p>Qual símbolo é usado para <strong>preparação</strong>?</p>
-        <button class="answer" onclick="checkAnswer('q8','hexagono', this)">Hexágono</button>
-        <button class="answer" onclick="checkAnswer('q8','retangulo', this)">Retângulo</button>
-        <div class="feedback"></div></div>
-      <div class="question-box final" id="finalBox"><h3>🎉 Fim do Quiz</h3><p id="finalScore"></p><div id="ranking"></div></div>
-    </div>
-  </div>
+<div id="finalBox" style="display:none;">
+  <h3>🎉 Fim do Quiz</h3>
+  <p id="finalScore"></p>
+  <div id="history"></div>
+  <div id="totalQuizzes"></div>
+  <h4>Exemplo de Fluxograma Completo Animado:</h4>
+  <div id="exampleFlowchart"></div>
+  <button id="btnRestart">Reiniciar Quiz</button>
 </div>
 
 <script>
-  let userName="",score=0,currentStep=0,startTime=0;
-  const steps=["inicio","entrada","processo","decisao","documento","db","subprocesso","conector","preparacao","fim"];
-  const stepQuestions={entrada:"q1",processo:"q2",decisao:"q3",documento:"q4",db:"q5",subprocesso:"q6",conector:"q7",preparacao:"q8"};
-  const correct={q1:"paralelogramo",q2:"retangulo",q3:"losango",q4:"documento",q5:"cilindro",q6:"retangulo-duplo",q7:"circulo",q8:"hexagono"};
-  let localRanking=JSON.parse(localStorage.getItem("quizRanking")||"[]");
+// --- Símbolos ---
+const symbols = {
+  inicio: { nome:"Início/Fim", svg:`<svg viewBox="0 0 140 80"><ellipse cx="70" cy="40" rx="60" ry="35" fill="#ff9800" stroke="#fff" stroke-width="3"/></svg>`, hint:"Representa início ou fim do fluxograma." },
+  entrada: { nome:"Entrada/Saída", svg:`<svg viewBox="0 0 140 80"><polygon points="20,0 140,0 120,80 0,80" fill="#f06292" stroke="#fff" stroke-width="3"/></svg>`, hint:"Indica entrada ou saída de dados." },
+  processo: { nome:"Processo", svg:`<svg viewBox="0 0 140 80"><rect x="5" y="5" width="130" height="70" fill="#42a5f5" stroke="#fff" stroke-width="3" rx="12"/></svg>`, hint:"Representa uma ação ou tarefa." },
+  decisao: { nome:"Decisão", svg:`<svg viewBox="0 0 140 80"><polygon points="70,0 140,40 70,80 0,40" fill="#66bb6a" stroke="#fff" stroke-width="3"/></svg>`, hint:"Indica decisão que leva a caminhos diferentes." },
+  documento: { nome:"Documento", svg:`<svg viewBox="0 0 140 80"><rect x="5" y="5" width="130" height="70" fill="#ffe082" stroke="#fff" stroke-width="3"/></svg>`, hint:"Representa um documento ou relatório." },
+  db: { nome:"Banco de Dados", svg:`<svg viewBox="0 0 140 80"><ellipse cx="70" cy="10" rx="60" ry="12" fill="#9575cd" stroke="#fff" stroke-width="2"/><rect x="10" y="10" width="120" height="60" fill="#7e57c2" stroke="#fff" stroke-width="2"/><ellipse cx="70" cy="70" rx="60" ry="12" fill="#9575cd" stroke="#fff" stroke-width="2"/></svg>`, hint:"Representa um banco de dados." },
+  subprocesso: { nome:"Subprocesso", svg:`<svg viewBox="0 0 140 80"><rect x="5" y="5" width="130" height="70" fill="#ff7043" stroke="#fff" stroke-width="3" rx="10"/><rect x="15" y="15" width="110" height="50" fill="none" stroke="#fff" stroke-width="3"/></svg>`, hint:"Indica um subprocesso definido externamente." },
+  conector: { nome:"Conector", svg:`<svg viewBox="0 0 80 80"><circle cx="40" cy="40" r="35" fill="#9ccc65" stroke="#fff" stroke-width="3"/></svg>`, hint:"Usado para conectar partes do fluxograma." },
+  preparacao: { nome:"Preparação", svg:`<svg viewBox="0 0 140 80"><polygon points="35,0 105,0 140,40 105,80 35,80 0,40" fill="#26c6da" stroke="#fff" stroke-width="3"/></svg>`, hint:"Indica preparação ou configuração antes de um processo." }
+};
 
-  function updateScore(){document.getElementById("score").innerText="Pontuação: "+score;}
-  function startFlow(){currentStep=1;startTime=new Date().getTime();nextStep();}
-  function nextStep(){
-    document.querySelectorAll(".symbol").forEach(s=>s.classList.remove("highlight","correct","incorrect"));
-    document.querySelectorAll(".arrow").forEach(a=>a.classList.remove("active"));
-    document.querySelectorAll(".question-box").forEach(q=>q.style.display="none");
-    if(currentStep>=steps.length){showFinal();return;}
-    const stepId=steps[currentStep];
-    const stepEl=document.querySelector(`.step[data-id='${stepId}'] .symbol`);
-    const arrowEl=document.querySelector(`.step[data-id='${stepId}'] .arrow`);
-    if(stepEl) stepEl.classList.add("highlight");
-    if(arrowEl) arrowEl.classList.add("active");
-    if(stepQuestions[stepId]){
-      const qBox=document.getElementById(stepQuestions[stepId]);
-      qBox.style.display="block";
-      qBox.querySelectorAll("button").forEach(b=>b.disabled=false);
-      qBox.querySelector(".feedback").innerText="";
-    }
-    currentStep++;
+// --- Perguntas (2 por símbolo) ---
+const questions = [
+  {symbol:"inicio", text:"Qual símbolo indica o início do fluxograma?", options:["Elipse","Retângulo","Losango"], answer:"Elipse"},
+  {symbol:"inicio", text:"Qual símbolo também representa o fim do fluxograma?", options:["Elipse","Paralelogramo","Retângulo"], answer:"Elipse"},
+  {symbol:"entrada", text:"Qual símbolo indica entrada de dados?", options:["Paralelogramo","Retângulo","Elipse"], answer:"Paralelogramo"},
+  {symbol:"entrada", text:"Qual símbolo também representa saída de informações?", options:["Losango","Paralelogramo","Retângulo"], answer:"Paralelogramo"},
+  {symbol:"processo", text:"Qual símbolo representa uma ação ou tarefa?", options:["Retângulo","Losango","Elipse"], answer:"Retângulo"},
+  {symbol:"processo", text:"Em qual símbolo descrevemos uma etapa do processo?", options:["Paralelogramo","Retângulo","Losango"], answer:"Retângulo"},
+  {symbol:"decisao", text:"Qual símbolo indica um ponto de decisão?", options:["Losango","Retângulo","Elipse"], answer:"Losango"},
+  {symbol:"decisao", text:"Qual símbolo é usado quando o fluxo pode seguir por caminhos diferentes?", options:["Losango","Paralelogramo","Retângulo"], answer:"Losango"},
+  {symbol:"documento", text:"Qual símbolo representa um documento ou relatório?", options:["Documento","Retângulo","Losango"], answer:"Documento"},
+  {symbol:"documento", text:"Qual símbolo é usado para mostrar relatórios em fluxograma?", options:["Documento","Paralelogramo","Elipse"], answer:"Documento"},
+  {symbol:"db", text:"Qual símbolo representa um banco de dados?", options:["Cilindro","Losango","Retângulo"], answer:"Cilindro"},
+  {symbol:"db", text:"Qual símbolo indica armazenamento de dados?", options:["Cilindro","Paralelogramo","Elipse"], answer:"Cilindro"},
+  {symbol:"subprocesso", text:"Qual símbolo indica um subprocesso definido?", options:["Subprocesso","Retângulo","Losango"], answer:"Subprocesso"},
+  {symbol:"subprocesso", text:"Qual símbolo é usado para etapas externas do processo?", options:["Subprocesso","Paralelogramo","Elipse"], answer:"Subprocesso"},
+  {symbol:"conector", text:"Qual símbolo conecta partes do fluxograma?", options:["Conector","Losango","Retângulo"], answer:"Conector"},
+  {symbol:"conector", text:"Qual símbolo é usado para ligações entre fluxos?", options:["Conector","Paralelogramo","Elipse"], answer:"Conector"},
+  {symbol:"preparacao", text:"Qual símbolo representa preparação?", options:["Preparação","Losango","Retângulo"], answer:"Preparação"},
+  {symbol:"preparacao", text:"Qual símbolo indica configuração antes do processo?", options:["Preparação","Paralelogramo","Elipse"], answer:"Preparação"}
+];
+
+// --- Variáveis ---
+let currentQuestion=0, correct=0, history=[], totalQuizzes=0, currentUser="", userAnswers={};
+
+// --- Funções ---
+function initUser(){
+  const name=document.getElementById("userName").value.trim();
+  if(!name){ alert("Digite seu nome"); return false; }
+  if(currentUser!==name){
+    currentUser=name; userAnswers={};
+    totalQuizzes=parseInt(localStorage.getItem("quizCount_"+currentUser))||0;
   }
-  function checkAnswer(qId,ans,btn){
-    const correctAns=correct[qId];
-    const qBox=document.getElementById(qId);
-    qBox.querySelectorAll("button").forEach(b=>b.disabled=true);
-    const feedback=qBox.querySelector(".feedback");
-    const stepId=Object.keys(stepQuestions).find(k=>stepQuestions[k]===qId);
-    const symbol=document.querySelector(`.step[data-id='${stepId}'] .symbol`);
-    if(ans===correctAns){score++;updateScore();feedback.innerText="✅ Correto!";symbol.classList.add("correct");}
-    else{feedback.innerText="❌ Incorreto!";symbol.classList.add("incorrect");}
-    setTimeout(()=>{qBox.style.display="none";nextStep();},500);
-  }
-  function showFinal(){
-    const total=Object.keys(correct).length;
-    document.getElementById("finalScore").innerText=`${userName}, sua pontuação: ${score} de ${total}`;
-    document.getElementById("finalBox").style.display="block";
-    const endTime=new Date().getTime();
-    const duration=Math.floor((endTime-startTime)/1000);
-    localRanking.push({nome:userName,pontuacao:score,tempo:duration});
-    localRanking.sort((a,b)=>b.pontuacao-a.pontuacao);
-    localStorage.setItem("quizRanking",JSON.stringify(localRanking));
-    document.getElementById("ranking").innerHTML="<strong>🏆 Ranking Local</strong><br>"+localRanking.slice(0,10).map(d=>`${d.nome}: ${d.pontuacao} pts`).join("<br>");
-  }
-  document.getElementById("btnStartQuiz").addEventListener("click",()=>{
-    const input=document.getElementById("userName").value.trim();
-    if(!input){document.getElementById("nameError").innerText="Digite seu nome!";return;}
-    userName=input;
-    document.getElementById("userNameDiv").style.display="none";
-    document.getElementById("quizContainer").style.display="block";
-    startFlow();
+  document.getElementById("quizCount").textContent=`Você realizou o quiz ${totalQuizzes} vezes.`;
+  return true;
+}
+
+// Iniciar quiz
+document.getElementById("btnStartQuiz").addEventListener("click",()=>{
+  if(!initUser()) return;
+  document.getElementById("question-area").innerHTML="";
+  currentQuestion=0; correct=0; history=[];
+  document.getElementById("finalBox").style.display="none";
+  showQuestion();
+});
+
+// Mostrar pergunta
+function showQuestion(){
+  if(currentQuestion>=questions.length){ endQuiz(); return; }
+  const q=questions[currentQuestion];
+  const qBox=document.createElement("div"); qBox.className="question-box clearfix";
+
+  const left=document.createElement("div"); left.className="symbol-img"; left.innerHTML=symbols[q.symbol].svg;
+  const right=document.createElement("div"); right.className="hint-box"; right.innerHTML=`${q.text} <em>Dica: ${symbols[q.symbol].hint}</em>`;
+
+  qBox.appendChild(left); qBox.appendChild(right);
+
+  const opts=[...q.options].sort(()=>Math.random()-0.5);
+  const btnDiv=document.createElement("div"); btnDiv.style.display="flex"; btnDiv.style.gap="8px";
+  opts.forEach(opt=>{
+    const btn=document.createElement("button");
+    btn.textContent=opt; btn.onclick=()=>checkAnswer(opt,q.symbol,qBox);
+    btnDiv.appendChild(btn);
   });
+  qBox.appendChild(btnDiv);
+
+  document.getElementById("question-area").appendChild(qBox);
+}
+
+// Validar resposta
+function checkAnswer(opt,symbol,qBox){
+  const q=questions[currentQuestion];
+  let resultSymbol="";
+  if(opt===q.answer){
+    correct++; resultSymbol="✅"; qBox.querySelector(".symbol-img").classList.add("symbol-correct"); userAnswers[symbol]="correct";
+  } else {
+    resultSymbol="❌"; qBox.querySelector(".symbol-img").classList.add("symbol-wrong"); userAnswers[symbol]="wrong";
+  }
+  history.push({q:q.text, answer:opt, result:resultSymbol});
+  currentQuestion++;
+  setTimeout(()=>{ document.getElementById("question-area").innerHTML=""; showQuestion(); },600);
+}
+
+// Finalizar quiz
+function endQuiz(){
+  totalQuizzes++; localStorage.setItem("quizCount_"+currentUser,totalQuizzes);
+  document.getElementById("quizCount").textContent=`Você realizou o quiz ${totalQuizzes} vezes.`;
+  document.getElementById("finalBox").style.display="block";
+  document.getElementById("finalScore").textContent=`${currentUser}, você acertou ${correct} de ${questions.length} perguntas.`;
+
+  let histHTML="";
+  history.forEach(h=>{ histHTML+=`${h.q} - Resposta: ${h.answer} ${h.result}<br>`; });
+  document.getElementById("history").innerHTML=histHTML;
+  document.getElementById("totalQuizzes").textContent=`Total de quizzes realizados: ${totalQuizzes}`;
+
+  drawExampleFlowchartAnimatedContinuous();
+}
+
+// Reiniciar quiz
+document.getElementById("btnRestart").addEventListener("click",()=>{
+  document.getElementById("finalBox").style.display="none";
+  document.getElementById("question-area").innerHTML="";
+  currentQuestion=0; correct=0; history=[]; userAnswers={};
+  showQuestion();
+});
+
+// --- Fluxograma animado contínuo ---
+function drawExampleFlowchartAnimatedContinuous(){
+  const container=document.getElementById("exampleFlowchart");
+  container.innerHTML="";
+
+  const nodes=[
+    {id:"inicio",x:400,y:20,sym:"inicio"},
+    {id:"entrada",x:400,y:120,sym:"entrada"},
+    {id:"processo",x:400,y:220,sym:"processo"},
+    {id:"decisao",x:400,y:320,sym:"decisao"},
+    {id:"processoSim",x:250,y:420,sym:"processo"},
+    {id:"processoNao",x:550,y:420,sym:"processo"},
+    {id:"documento",x:400,y:520,sym:"documento"},
+    {id:"db",x:400,y:620,sym:"db"},
+    {id:"fim",x:400,y:720,sym:"inicio"}
+  ];
+
+  const arrows=[
+    {from:"inicio",to:"entrada",curve:0,color:"#fff"},
+    {from:"entrada",to:"processo",curve:0,color:"#fff"},
+    {from:"processo",to:"decisao",curve:0,color:"#fff"},
+    {from:"decisao",to:"processoSim",curve:-0.5,color:"#00ff00"},
+    {from:"decisao",to:"processoNao",curve:0.5,color:"#ff5252"},
+    {from:"processoSim",to:"documento",curve:0,color:"#00ff00"},
+    {from:"processoNao",to:"documento",curve:0,color:"#ff5252"},
+    {from:"documento",to:"db",curve:0,color:"#fff"},
+    {from:"db",to:"fim",curve:0,color:"#fff"}
+  ];
+
+  nodes.forEach(n=>{
+    const div=document.createElement("div"); div.className="flow-node"; div.style.left=n.x+"px"; div.style.top=n.y+"px";
+    div.innerHTML=`${symbols[n.sym].svg}<br>${symbols[n.sym].nome}`;
+    container.appendChild(div);
+    n.elem=div;
+  });
+
+  const svgPath=document.createElementNS("http://www.w3.org/2000/svg","svg");
+  svgPath.setAttribute("style","position:absolute;top:0;left:0;width:100%;height:100%;overflow:visible;");
+  svgPath.innerHTML=`<defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#fff"/></marker></defs>`;
+  container.appendChild(svgPath);
+
+  function animateFlow(){
+    let step=0;
+    function nextStep(){
+      svgPath.innerHTML=`<defs><marker id="arrowhead" markerWidth="10" markerHeight="7" refX="10" refY="3.5" orient="auto"><polygon points="0 0,10 3.5,0 7" fill="#fff"/></marker></defs>`;
+      nodes.forEach(n=>n.elem.classList.remove("symbol-active"));
+      function animateArrow(i){
+        if(i>=arrows.length){ setTimeout(animateFlow,500); return; }
+        const a=arrows[i];
+        const fromNode=nodes.find(n=>n.id===a.from);
+        const toNode=nodes.find(n=>n.id===a.to);
+        fromNode.elem.classList.add("symbol-active");
+        const x1=fromNode.x+70, y1=fromNode.y+40, x2=toNode.x+70, y2=toNode.y+40;
+        const curveX=(x1+x2)/2, curveY=(y1+y2)/2 + 80*a.curve;
+        const pathEl=document.createElementNS("http://www.w3.org/2000/svg","path");
+        pathEl.setAttribute("d",`M${x1},${y1} Q${curveX},${curveY} ${x2},${y2}`);
+        pathEl.setAttribute("stroke",a.color); pathEl.setAttribute("stroke-width","3");
+        pathEl.setAttribute("fill","transparent"); pathEl.setAttribute("marker-end","url(#arrowhead)");
+        svgPath.appendChild(pathEl);
+        setTimeout(()=>animateArrow(i+1),600);
+      }
+      animateArrow(0);
+    }
+    nextStep();
+  }
+  animateFlow();
+}
+
 </script>
 </body>
 </html>
