@@ -132,95 +132,117 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-// Variáveis do quiz
-let score=0, currentStep=0, startTime, userName;
-const steps=["inicio","entrada","processo","decisao","documento","db","subprocesso","conector","preparacao","fim"];
-const stepQuestions={entrada:"q1",processo:"q2",decisao:"q3",documento:"q4",db:"q5",subprocesso:"q6",conector:"q7",preparacao:"q8"};
-const correct={q1:"paralelogramo",q2:"retangulo",q3:"losango",q4:"documento",q5:"cilindro",q6:"retangulo-duplo",q7:"circulo",q8:"hexagono"};
+// Quiz
+let userName = "";
+let score = 0;
+let currentStep = 0;
+let startTime = 0;
 
-// Funções
+const steps = ["inicio","entrada","processo","decisao","documento","db","subprocesso","conector","preparacao","fim"];
+const stepQuestions = {entrada:"q1",processo:"q2",decisao:"q3",documento:"q4",db:"q5",subprocesso:"q6",conector:"q7",preparacao:"q8"};
+const correct = {q1:"paralelogramo",q2:"retangulo",q3:"losango",q4:"documento",q5:"cilindro",q6:"retangulo-duplo",q7:"circulo",q8:"hexagono"};
+
 function updateScore(){document.getElementById("score").innerText="Pontuação: "+score;}
-function startFlow(){currentStep=0;nextStep();}
+
+function startFlow(){
+  currentStep = 0;
+  startTime = new Date().getTime();
+  nextStep();
+}
+
 function nextStep(){
   document.querySelectorAll(".symbol").forEach(s=>s.classList.remove("highlight","correct","incorrect"));
   document.querySelectorAll(".arrow").forEach(a=>a.classList.remove("active"));
   document.querySelectorAll(".question-box").forEach(q=>q.style.display="none");
-  if(currentStep>=steps.length){showFinal();return;}
-  const stepId=steps[currentStep];
-  const stepEl=document.querySelector(`.step[data-id='${stepId}'] .symbol`);
-  const arrowEl=document.querySelector(`.step[data-id='${stepId}'] .arrow`);
+
+  if(currentStep >= steps.length){showFinal(); return;}
+
+  const stepId = steps[currentStep];
+  const stepEl = document.querySelector(`.step[data-id='${stepId}'] .symbol`);
+  const arrowEl = document.querySelector(`.step[data-id='${stepId}'] .arrow`);
   if(stepEl) stepEl.classList.add("highlight");
-  if(arrowEl){arrowEl.classList.add("active");}
+  if(arrowEl) arrowEl.classList.add("active");
+
   if(stepQuestions[stepId]){
-    const qBox=document.getElementById(stepQuestions[stepId]);
-    qBox.style.display="block";
+    const qBox = document.getElementById(stepQuestions[stepId]);
+    qBox.style.display = "block";
     qBox.querySelectorAll("button").forEach(b=>b.disabled=false);
     qBox.querySelector(".feedback").innerText="";
   }
+
   currentStep++;
 }
-function checkAnswer(qId,ans,btn){
-  const correctAns=correct[qId];
-  const qBox=document.getElementById(qId);
+
+function checkAnswer(qId, ans, btn){
+  const correctAns = correct[qId];
+  const qBox = document.getElementById(qId);
   qBox.querySelectorAll("button").forEach(b=>b.disabled=true);
-  const feedback=qBox.querySelector(".feedback");
-  const stepId=Object.keys(stepQuestions).find(k=>stepQuestions[k]===qId);
-  const symbol=document.querySelector(`.step[data-id='${stepId}'] .symbol`);
-  if(ans===correctAns){score++;updateScore();feedback.innerText="✅ Correto!";if(symbol) symbol.classList.add("correct");}
+  const feedback = qBox.querySelector(".feedback");
+  const stepId = Object.keys(stepQuestions).find(k=>stepQuestions[k]===qId);
+  const symbol = document.querySelector(`.step[data-id='${stepId}'] .symbol`);
+  if(ans === correctAns){score++;updateScore();feedback.innerText="✅ Correto!";if(symbol) symbol.classList.add("correct");}
   else{feedback.innerText="❌ Incorreto!";if(symbol) symbol.classList.add("incorrect");}
-  setTimeout(()=>nextStep(),300);
+  setTimeout(()=>{qBox.style.display="none";nextStep();},300);
 }
 
-// Tooltip
-const tooltip=document.getElementById("symbolInfo");
-function showTooltip(id,e){
-  const info={
-    inicio:{titulo:"Início/Fim",descricao:"Ponto inicial ou final.",exemplo:"Ex: Início do processo."},
-    entrada:{titulo:"Entrada/Paralelogramo",descricao:"Entrada/saída de dados.",exemplo:"Ex: Digitar nome do usuário."},
-    processo:{titulo:"Processo",descricao:"Ação.",exemplo:"Ex: Calcular média."},
-    decisao:{titulo:"Decisão",descricao:"Tomada de decisão.",exemplo:"Ex: Usuário cadastrado?"},
-    documento:{titulo:"Documento",descricao:"Documento.",exemplo:"Ex: Gerar relatório."},
-    db:{titulo:"Banco de Dados",descricao:"Armazenamento.",exemplo:"Ex: Salvar usuário."},
-    subprocesso:{titulo:"Subprocesso",descricao:"Subprocesso.",exemplo:"Ex: Validar dados."},
-    conector:{titulo:"Conector",descricao:"Liga partes do fluxograma.",exemplo:"Ex: Continuar fluxo."},
-    preparacao:{titulo:"Preparação",descricao:"Setup.",exemplo:"Ex: Preparar sistema."},
-    fim:{titulo:"Fim",descricao:"Final do processo.",exemplo:"Ex: Fim do cadastro."}
-  }[id];
-  tooltip.innerHTML=`<strong>${info.titulo}</strong><br>${info.descricao}<br><em>${info.exemplo}</em>`;
-  const rect=e.target.getBoundingClientRect();
-  tooltip.style.top=(rect.top+window.scrollY)+"px";
-  tooltip.style.left=(rect.right+10+window.scrollX)+"px";
-  tooltip.classList.add("show");
-}
-function hideTooltip(){tooltip.classList.remove("show");}
-
-// Final
 function showFinal(){
-  const endTime=new Date().getTime();
-  const tempo=Math.floor((endTime-startTime)/1000);
-  document.getElementById("finalScore").innerText=`Sua pontuação final: ${score}`;
+  const total = Object.keys(correct).length;
+  document.getElementById("finalScore").innerText=`${userName}, sua pontuação final: ${score} de ${total}`;
   document.getElementById("finalBox").style.display="block";
-  db.ref('ranking').push({nome:userName,pontuacao:score,tempo:tempo,timestamp:Date.now()});
-  db.ref('ranking').once('value', snapshot => {
-    if(snapshot.exists()){
-      const dados = Object.values(snapshot.val())
-        .sort((a,b)=>b.pontuacao-a.pontuacao)
-        .slice(0,10);
-      document.getElementById("ranking").innerHTML="<strong>🏆 Ranking Top 10</strong><br>"+dados.map(d=>`${d.nome}: ${d.pontuacao}`).join("<br>");
-    }
+
+  const endTime = new Date().getTime();
+  const duration = Math.floor((endTime-startTime)/1000);
+
+  // salvar no Firebase
+  const newRef = db.ref('ranking').push();
+  newRef.set({nome:userName, pontuacao:score, tempo:duration}).then(loadRanking);
+
+  currentStep = 0;
+}
+
+function loadRanking(){
+  db.ref('ranking').orderByChild('pontuacao').limitToLast(10).once('value', snap=>{
+    const dados = [];
+    snap.forEach(s=>dados.push(s.val()));
+    dados.sort((a,b)=>b.pontuacao - a.pontuacao);
+    document.getElementById("ranking").innerHTML="<strong>🏆 Ranking Top 10</strong><br>"+dados.map(d=>`${d.nome}: ${d.pontuacao} pts`).join("<br>");
   });
 }
 
-// Iniciar quiz
+// tooltips
+const infoText = {
+  inicio:"Início do fluxograma",
+  entrada:"Recebe dados do usuário ou sistema",
+  processo:"Etapa de processamento ou ação",
+  decisao:"Ponto de decisão (sim/não)",
+  documento:"Geração ou uso de documento",
+  db:"Banco de dados",
+  subprocesso:"Processo menor dentro do principal",
+  conector:"Conecta partes do fluxograma",
+  preparacao:"Setup ou preparação de dados",
+  fim:"Fim do fluxograma"
+};
+
+function showTooltip(id, e){
+  const info = document.getElementById("symbolInfo");
+  info.innerText = infoText[id];
+  info.style.top = (e.target.getBoundingClientRect().top + window.scrollY - 10) + "px";
+  info.style.left = (e.target.getBoundingClientRect().right + 10) + "px";
+  info.classList.add("show");
+}
+
+function hideTooltip(){document.getElementById("symbolInfo").classList.remove("show");}
+
+// iniciar quiz
 document.getElementById("btnStartQuiz").addEventListener("click", ()=>{
-  const input=document.getElementById("userName").value.trim();
+  const input = document.getElementById("userName").value.trim();
   if(!input){document.getElementById("nameError").innerText="Digite seu nome!"; return;}
-  userName=input;
-  startTime=new Date().getTime();
+  userName = input;
   document.getElementById("userNameDiv").style.display="none";
   document.getElementById("quizContainer").style.display="block";
   startFlow();
 });
 </script>
+
 </body>
 </html>
