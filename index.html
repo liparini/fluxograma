@@ -31,6 +31,7 @@ button:disabled{opacity:.6;cursor:default}
 .feedback{margin-top:10px;font-weight:700;font-size:15px}
 .final{background:linear-gradient(90deg,#263238,#37474f);padding:18px;border-radius:10px;text-align:center;margin-top:20px}
 #ranking{margin-top:10px;text-align:center}
+#score{font-weight:600;margin:10px 0}
 @media(max-width:800px){.container{flex-direction:column;align-items:center}.flowchart{width:90%}}
 </style>
 </head>
@@ -41,7 +42,7 @@ button:disabled{opacity:.6;cursor:default}
 <!-- Nome do usuário -->
 <div id="userNameDiv">
   <input type="text" id="userName" placeholder="Digite seu nome">
-  <button onclick="startQuiz()">Iniciar Quiz</button>
+  <button id="btnStartQuiz">Iniciar Quiz</button>
   <p id="nameError" style="color:red;"></p>
 </div>
 
@@ -81,7 +82,6 @@ button:disabled{opacity:.6;cursor:default}
 import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
 import { getDatabase, ref, push, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
 
-// Config Firebase (aponta para raiz do DB)
 const firebaseConfig = {
   apiKey: "AIzaSyDzUMFgs90Kuh0TDQ8zUT0-10bMnv1CAG8",
   authDomain: "quiz-fluxograma.firebaseapp.com",
@@ -91,10 +91,10 @@ const firebaseConfig = {
   messagingSenderId: "535442125816",
   appId: "1:535442125816:web:998bdad39c50d068885c0d"
 };
+
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
 
-// Quiz vars
 let score=0, currentStep=1, startTime, userName;
 const steps=["inicio","entrada","processo","decisao","documento","db","subprocesso","conector","preparacao","fim"];
 const stepQuestions={entrada:"q1"};
@@ -129,7 +129,8 @@ function checkAnswer(qId,ans,btn){
 }
 function resetFlow(){score=0;updateScore();currentStep=1;document.querySelectorAll(".symbol").forEach(s=>s.classList.remove("highlight"));document.querySelectorAll(".question-box").forEach(q=>q.style.display="none");document.getElementById("finalBox").style.display="none";startTime=new Date().getTime();}
 
-// Nome obrigatório
+document.getElementById('btnStartQuiz').addEventListener('click', startQuiz);
+
 function startQuiz(){
   const nameInput=document.getElementById("userName").value.trim();
   if(!nameInput){document.getElementById("nameError").innerText="Nome obrigatório!"; return;}
@@ -141,7 +142,6 @@ function startQuiz(){
   startFlow();
 }
 
-// Tooltip
 const tooltip=document.getElementById("symbolInfo");
 function showTooltip(id,e){
   const info={
@@ -164,18 +164,15 @@ function showTooltip(id,e){
 }
 function hideTooltip(){tooltip.classList.remove("show");}
 
-// Final & Ranking
 function showFinal(){
   const endTime=new Date().getTime();
   const tempo=Math.floor((endTime-startTime)/1000);
   document.getElementById("finalScore").innerText=`Sua pontuação final: ${score}`;
   document.getElementById("finalBox").style.display="block";
 
-  // Salvar ranking no Firebase
   const pontRef = ref(db,'ranking');
   push(pontRef,{nome:userName,pontuacao:score,tempo:tempo,timestamp:Date.now()});
 
-  // Mostrar top 10
   get(ref(db,'ranking')).then(snapshot=>{
     if(snapshot.exists()){
       const dados=Object.values(snapshot.val()).sort((a,b)=>b.pontuacao-a.pontuacao).slice(0,10);
@@ -185,5 +182,6 @@ function showFinal(){
   });
 }
 </script>
+
 </body>
 </html>
