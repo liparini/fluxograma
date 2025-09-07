@@ -13,7 +13,7 @@ button{padding:8px 12px;margin:4px;border:none;border-radius:6px;background:#219
 button:disabled{opacity:.6;cursor:default}
 .container{display:flex;justify-content:center;align-items:flex-start;gap:20px}
 .flowchart{width:360px;position:relative;border-radius:8px;padding:12px;background:#2c2c3c}
-.symbol{width:140px;height:60px;display:flex;align-items:center;justify-content:center;font-weight:700;border-radius:10px;color:#fff;position:relative;z-index:1;cursor:pointer}
+.symbol{width:140px;height:60px;display:flex;align-items:center;justify-content:center;font-weight:700;border-radius:10px;color:#fff;position:relative;z-index:1;cursor:pointer;transition:0.3s}
 .symbol.startend{background:#ff9800;border-radius:36px}
 .symbol.input{background:#f06292;clip-path:polygon(15% 0,100% 0,85% 100%,0% 100%)}
 .symbol.process{background:#42a5f5}
@@ -32,6 +32,8 @@ button:disabled{opacity:.6;cursor:default}
 .final{background:linear-gradient(90deg,#263238,#37474f);padding:18px;border-radius:10px;text-align:center;margin-top:20px}
 #ranking{margin-top:10px;text-align:center}
 #score{font-weight:600;margin:10px 0}
+.arrow{width:2px;height:50px;background:#fff;position:absolute;top:60px;left:50%;transform:translateX(-50%) scaleY(0);transform-origin:top;transition:transform .5s ease,background .3s ease,opacity .3s ease;opacity:.3}
+.arrow.active{opacity:1;background:#ffeb3b;transform:translateX(-50%) scaleY(1)}
 @media(max-width:800px){.container{flex-direction:column;align-items:center}.flowchart{width:90%}}
 </style>
 </head>
@@ -50,15 +52,15 @@ button:disabled{opacity:.6;cursor:default}
   <div id="score">Pontuação: 0</div>
   <div class="container">
     <div class="flowchart">
-      <div class="step" data-id="inicio" style="top:0; left:110px"><div class="symbol startend" onmouseenter="showTooltip('inicio', event)" onmouseleave="hideTooltip()">Início</div></div>
-      <div class="step" data-id="entrada" style="top:80px; left:110px"><div class="symbol input" onmouseenter="showTooltip('entrada', event)" onmouseleave="hideTooltip()">Entrada</div></div>
-      <div class="step" data-id="processo" style="top:160px; left:110px"><div class="symbol process" onmouseenter="showTooltip('processo', event)" onmouseleave="hideTooltip()">Processo</div></div>
-      <div class="step" data-id="decisao" style="top:240px; left:110px"><div class="symbol decision" onmouseenter="showTooltip('decisao', event)" onmouseleave="hideTooltip()">Decisão</div></div>
-      <div class="step" data-id="documento" style="top:320px; left:110px"><div class="symbol document" onmouseenter="showTooltip('documento', event)" onmouseleave="hideTooltip()">Documento</div></div>
-      <div class="step" data-id="db" style="top:400px; left:110px"><div class="symbol database" onmouseenter="showTooltip('db', event)" onmouseleave="hideTooltip()">Banco de Dados</div></div>
-      <div class="step" data-id="subprocesso" style="top:480px; left:110px"><div class="symbol subprocess" onmouseenter="showTooltip('subprocesso', event)" onmouseleave="hideTooltip()">Subprocesso</div></div>
-      <div class="step" data-id="conector" style="top:560px; left:110px"><div class="symbol process" onmouseenter="showTooltip('conector', event)" onmouseleave="hideTooltip()">Conector</div></div>
-      <div class="step" data-id="preparacao" style="top:640px; left:110px"><div class="symbol process" onmouseenter="showTooltip('preparacao', event)" onmouseleave="hideTooltip()">Preparação</div></div>
+      <div class="step" data-id="inicio" style="top:0; left:110px"><div class="symbol startend" onmouseenter="showTooltip('inicio', event)" onmouseleave="hideTooltip()">Início</div><div class="arrow"></div></div>
+      <div class="step" data-id="entrada" style="top:80px; left:110px"><div class="symbol input" onmouseenter="showTooltip('entrada', event)" onmouseleave="hideTooltip()">Entrada</div><div class="arrow"></div></div>
+      <div class="step" data-id="processo" style="top:160px; left:110px"><div class="symbol process" onmouseenter="showTooltip('processo', event)" onmouseleave="hideTooltip()">Processo</div><div class="arrow"></div></div>
+      <div class="step" data-id="decisao" style="top:240px; left:110px"><div class="symbol decision" onmouseenter="showTooltip('decisao', event)" onmouseleave="hideTooltip()">Decisão</div><div class="arrow"></div></div>
+      <div class="step" data-id="documento" style="top:320px; left:110px"><div class="symbol document" onmouseenter="showTooltip('documento', event)" onmouseleave="hideTooltip()">Documento</div><div class="arrow"></div></div>
+      <div class="step" data-id="db" style="top:400px; left:110px"><div class="symbol database" onmouseenter="showTooltip('db', event)" onmouseleave="hideTooltip()">Banco de Dados</div><div class="arrow"></div></div>
+      <div class="step" data-id="subprocesso" style="top:480px; left:110px"><div class="symbol subprocess" onmouseenter="showTooltip('subprocesso', event)" onmouseleave="hideTooltip()">Subprocesso</div><div class="arrow"></div></div>
+      <div class="step" data-id="conector" style="top:560px; left:110px"><div class="symbol process" onmouseenter="showTooltip('conector', event)" onmouseleave="hideTooltip()">Conector</div><div class="arrow"></div></div>
+      <div class="step" data-id="preparacao" style="top:640px; left:110px"><div class="symbol process" onmouseenter="showTooltip('preparacao', event)" onmouseleave="hideTooltip()">Preparação</div><div class="arrow"></div></div>
       <div class="step" data-id="fim" style="top:720px; left:110px"><div class="symbol startend" onmouseenter="showTooltip('fim', event)" onmouseleave="hideTooltip()">Fim</div></div>
     </div>
     <div class="symbol-info" id="symbolInfo"></div>
@@ -67,6 +69,41 @@ button:disabled{opacity:.6;cursor:default}
       <div class="question-box" id="q1"><p>Qual símbolo representa <strong>entrada/saída</strong> de dados?</p>
         <button class="answer" onclick="checkAnswer('q1','paralelogramo', this)">Paralelogramo</button>
         <button class="answer" onclick="checkAnswer('q1','losango', this)">Losango</button>
+        <div class="feedback"></div>
+      </div>
+      <div class="question-box" id="q2"><p>Qual símbolo é usado para um <strong>processo/ação</strong>?</p>
+        <button class="answer" onclick="checkAnswer('q2','retangulo', this)">Retângulo</button>
+        <button class="answer" onclick="checkAnswer('q2','circulo', this)">Círculo</button>
+        <div class="feedback"></div>
+      </div>
+      <div class="question-box" id="q3"><p>Qual símbolo representa uma <strong>decisão</strong>?</p>
+        <button class="answer" onclick="checkAnswer('q3','losango', this)">Losango</button>
+        <button class="answer" onclick="checkAnswer('q3','elipse', this)">Elipse</button>
+        <div class="feedback"></div>
+      </div>
+      <div class="question-box" id="q4"><p>Qual símbolo indica um <strong>documento</strong>?</p>
+        <button class="answer" onclick="checkAnswer('q4','documento', this)">Documento</button>
+        <button class="answer" onclick="checkAnswer('q4','processo', this)">Processo</button>
+        <div class="feedback"></div>
+      </div>
+      <div class="question-box" id="q5"><p>Qual símbolo indica um <strong>banco de dados</strong>?</p>
+        <button class="answer" onclick="checkAnswer('q5','cilindro', this)">Cilindro</button>
+        <button class="answer" onclick="checkAnswer('q5','losango', this)">Losango</button>
+        <div class="feedback"></div>
+      </div>
+      <div class="question-box" id="q6"><p>Qual símbolo indica um <strong>subprocesso</strong>?</p>
+        <button class="answer" onclick="checkAnswer('q6','retangulo-duplo', this)">Retângulo duplo</button>
+        <button class="answer" onclick="checkAnswer('q6','paralelogramo', this)">Paralelogramo</button>
+        <div class="feedback"></div>
+      </div>
+      <div class="question-box" id="q7"><p>Qual símbolo é usado como <strong>conector</strong> para ligar partes?</p>
+        <button class="answer" onclick="checkAnswer('q7','circulo', this)">Círculo</button>
+        <button class="answer" onclick="checkAnswer('q7','losango', this)">Losango</button>
+        <div class="feedback"></div>
+      </div>
+      <div class="question-box" id="q8"><p>Qual símbolo é usado para <strong>preparação</strong> ou setup?</p>
+        <button class="answer" onclick="checkAnswer('q8','hexagono', this)">Hexágono</button>
+        <button class="answer" onclick="checkAnswer('q8','retangulo', this)">Retângulo</button>
         <div class="feedback"></div>
       </div>
       <div class="question-box final" id="finalBox">
@@ -78,11 +115,11 @@ button:disabled{opacity:.6;cursor:default}
   </div>
 </div>
 
-<!-- Firebase compatível CDN -->
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
 <script>
+// Config Firebase
 const firebaseConfig = {
   apiKey: "AIzaSyDzUMFgs90Kuh0TDQ8zUT0-10bMnv1CAG8",
   authDomain: "quiz-fluxograma.firebaseapp.com",
@@ -95,39 +132,46 @@ const firebaseConfig = {
 firebase.initializeApp(firebaseConfig);
 const db = firebase.database();
 
-let score=0, currentStep=1, startTime, userName;
+// Variáveis do quiz
+let score=0, currentStep=0, startTime, userName;
 const steps=["inicio","entrada","processo","decisao","documento","db","subprocesso","conector","preparacao","fim"];
-const stepQuestions={entrada:"q1"};
-const correct={q1:"paralelogramo"};
+const stepQuestions={entrada:"q1",processo:"q2",decisao:"q3",documento:"q4",db:"q5",subprocesso:"q6",conector:"q7",preparacao:"q8"};
+const correct={q1:"paralelogramo",q2:"retangulo",q3:"losango",q4:"documento",q5:"cilindro",q6:"retangulo-duplo",q7:"circulo",q8:"hexagono"};
 
+// Funções
 function updateScore(){document.getElementById("score").innerText="Pontuação: "+score;}
-function startFlow(){currentStep=1;highlightNext();}
-function nextStep(){currentStep++;highlightNext();}
-function highlightNext(){
+function startFlow(){currentStep=0;nextStep();}
+function nextStep(){
   document.querySelectorAll(".symbol").forEach(s=>s.classList.remove("highlight","correct","incorrect"));
-  if(currentStep>=steps.length) return;
+  document.querySelectorAll(".arrow").forEach(a=>a.classList.remove("active"));
+  document.querySelectorAll(".question-box").forEach(q=>q.style.display="none");
+  if(currentStep>=steps.length){showFinal();return;}
   const stepId=steps[currentStep];
   const stepEl=document.querySelector(`.step[data-id='${stepId}'] .symbol`);
+  const arrowEl=document.querySelector(`.step[data-id='${stepId}'] .arrow`);
   if(stepEl) stepEl.classList.add("highlight");
-  document.querySelectorAll(".question-box").forEach(q=>q.style.display="none");
+  if(arrowEl){arrowEl.classList.add("active");}
   if(stepQuestions[stepId]){
     const qBox=document.getElementById(stepQuestions[stepId]);
     qBox.style.display="block";
     qBox.querySelectorAll("button").forEach(b=>b.disabled=false);
     qBox.querySelector(".feedback").innerText="";
   }
-  if(stepId==="fim") showFinal();
+  currentStep++;
 }
 function checkAnswer(qId,ans,btn){
   const correctAns=correct[qId];
   const qBox=document.getElementById(qId);
   qBox.querySelectorAll("button").forEach(b=>b.disabled=true);
   const feedback=qBox.querySelector(".feedback");
-  if(ans===correctAns){score++;updateScore();feedback.innerText="✅ Correto!";}
-  else{feedback.innerText="❌ Incorreto!";}
-  setTimeout(()=>{qBox.style.display="none";nextStep();},300);
+  const stepId=Object.keys(stepQuestions).find(k=>stepQuestions[k]===qId);
+  const symbol=document.querySelector(`.step[data-id='${stepId}'] .symbol`);
+  if(ans===correctAns){score++;updateScore();feedback.innerText="✅ Correto!";if(symbol) symbol.classList.add("correct");}
+  else{feedback.innerText="❌ Incorreto!";if(symbol) symbol.classList.add("incorrect");}
+  setTimeout(()=>nextStep(),300);
 }
 
+// Tooltip
 const tooltip=document.getElementById("symbolInfo");
 function showTooltip(id,e){
   const info={
@@ -150,42 +194,33 @@ function showTooltip(id,e){
 }
 function hideTooltip(){tooltip.classList.remove("show");}
 
+// Final
 function showFinal(){
   const endTime=new Date().getTime();
   const tempo=Math.floor((endTime-startTime)/1000);
   document.getElementById("finalScore").innerText=`Sua pontuação final: ${score}`;
   document.getElementById("finalBox").style.display="block";
-
   db.ref('ranking').push({nome:userName,pontuacao:score,tempo:tempo,timestamp:Date.now()});
-
   db.ref('ranking').once('value', snapshot => {
     if(snapshot.exists()){
       const dados = Object.values(snapshot.val())
         .sort((a,b)=>b.pontuacao-a.pontuacao)
         .slice(0,10);
-      document.getElementById("ranking").innerHTML = "<h4>🏆 Ranking Global</h4>" + 
-        dados.map((u,i)=>`${i+1}. ${u.nome} - ${u.pontuacao} pts (${u.tempo}s)`).join("<br>");
+      document.getElementById("ranking").innerHTML="<strong>🏆 Ranking Top 10</strong><br>"+dados.map(d=>`${d.nome}: ${d.pontuacao}`).join("<br>");
     }
   });
 }
-</script>
-<script>
-document.addEventListener("DOMContentLoaded", function() {
-  document.getElementById('btnStartQuiz').addEventListener('click', function() {
-    const nome = document.getElementById("userName").value.trim();
-    if(!nome){
-      document.getElementById("nameError").innerText = "Nome obrigatório!";
-      return;
-    }
-    userName = nome;
-    document.getElementById("nameError").innerText = "";
-    document.getElementById("userNameDiv").style.display = "none";
-    document.getElementById("quizContainer").style.display = "block";
-    startFlow();
-    startTime = new Date().getTime();
-  });
+
+// Iniciar quiz
+document.getElementById("btnStartQuiz").addEventListener("click", ()=>{
+  const input=document.getElementById("userName").value.trim();
+  if(!input){document.getElementById("nameError").innerText="Digite seu nome!"; return;}
+  userName=input;
+  startTime=new Date().getTime();
+  document.getElementById("userNameDiv").style.display="none";
+  document.getElementById("quizContainer").style.display="block";
+  startFlow();
 });
 </script>
-
 </body>
 </html>
