@@ -117,7 +117,6 @@ button:disabled{opacity:.6;cursor:default}
 
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
-
 <script>
 // Config Firebase
 const firebaseConfig = {
@@ -145,7 +144,7 @@ const correct = {q1:"paralelogramo",q2:"retangulo",q3:"losango",q4:"documento",q
 function updateScore(){document.getElementById("score").innerText="Pontuação: "+score;}
 
 function startFlow(){
-  currentStep = 0;
+  currentStep = 1; // começa no primeiro step com pergunta
   startTime = new Date().getTime();
   nextStep();
 }
@@ -196,8 +195,6 @@ function showFinal(){
   // salvar no Firebase
   const newRef = db.ref('ranking').push();
   newRef.set({nome:userName, pontuacao:score, tempo:duration}).then(loadRanking);
-
-  currentStep = 0;
 }
 
 function loadRanking(){
@@ -209,7 +206,6 @@ function loadRanking(){
   });
 }
 
-// tooltips
 const infoText = {
   inicio:"Início do fluxograma",
   entrada:"Recebe dados do usuário ou sistema",
@@ -233,7 +229,6 @@ function showTooltip(id, e){
 
 function hideTooltip(){document.getElementById("symbolInfo").classList.remove("show");}
 
-// iniciar quiz
 document.getElementById("btnStartQuiz").addEventListener("click", ()=>{
   const input = document.getElementById("userName").value.trim();
   if(!input){document.getElementById("nameError").innerText="Digite seu nome!"; return;}
@@ -243,6 +238,5 @@ document.getElementById("btnStartQuiz").addEventListener("click", ()=>{
   startFlow();
 });
 </script>
-
 </body>
 </html>
