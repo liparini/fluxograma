@@ -13,111 +13,30 @@
   button{padding:8px 12px;margin:4px;border:none;border-radius:6px;background:#1976d2;color:#fff;cursor:pointer}
   button:disabled{opacity:.6;cursor:default}
   .container{display:flex;justify-content:center;align-items:flex-start;gap:20px}
-  .flowchart{
-    width:360px;
-    position:relative;
-    border-radius:8px;
-    padding:14px;
-    background:var(--card);
-    /* garante espaço para todos os passos posicionados */
-    min-height:1250px;
-  }
-
-  /* cada caixa do fluxograma deve ser positioned (absolute) para respeitar top/left */
-  .step{
-    position:absolute;
-    width:140px;
-    display:flex;
-    flex-direction:column;
-    align-items:center;
-    left:110px; /* fallback, pro caso não setem inline */
-  }
-
-  .symbol{
-    width:140px;
-    height:60px;
-    box-sizing:border-box;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    font-weight:700;
-    border-radius:10px;
-    color:#fff;
-    position:relative;
-    z-index:2;
-    cursor:pointer;
-    transition:transform .18s ease, box-shadow .18s ease, outline .15s ease;
-  }
+  .flowchart{width:360px;position:relative;border-radius:8px;padding:14px;background:var(--card);min-height:1250px}
+  .step{position:absolute;width:140px;display:flex;flex-direction:column;align-items:center;left:110px}
+  .symbol{width:140px;height:60px;display:flex;align-items:center;justify-content:center;font-weight:700;border-radius:10px;color:#fff;cursor:pointer;transition:transform .18s,box-shadow .18s,outline .15s}
   .symbol:hover{transform:translateY(-3px)}
   .symbol.highlight{box-shadow:0 0 0 6px rgba(255,235,59,0.08)}
   .symbol.correct{outline:4px solid rgba(76,175,80,0.45)}
   .symbol.incorrect{outline:4px solid rgba(244,67,54,0.45)}
-
   .symbol.startend{background:#ff9800;border-radius:36px}
   .symbol.input{background:#f06292;clip-path:polygon(15% 0,100% 0,85% 100%,0% 100%)}
   .symbol.process{background:#42a5f5}
   .symbol.decision{background:#66bb6a;clip-path:polygon(50% 0,100% 50%,50% 100%,0% 50%)}
   .symbol.document{background:#ffe082;color:#000;border-radius:6px 6px 16px 6px}
-  /* cilindro: base + sombra */
-  .symbol.database{
-    background:linear-gradient(180deg,#9575cd,#7e57c2);
-    border-radius:50%/20%;
-    height:70px;
-    width:140px;
-    position:relative;
-  }
-  .symbol.database::before{
-    content:"";
-    position:absolute;
-    left:10px; right:10px; top:-12px;
-    height:18px;border-radius:50%;
-    background:rgba(255,255,255,0.12);
-  }
-  .symbol.database::after{
-    content:"";
-    position:absolute;
-    left:10px; right:10px; bottom:-12px;
-    height:18px;border-radius:50%;
-    background:rgba(0,0,0,0.12);
-  }
-
-  /* subprocesso: efeito de retângulo duplo */
-  .symbol.subprocesso{
-    background:#ff7043;
-    border-radius:10px;
-    position:relative;
-    padding:4px 6px;
-  }
-  .symbol.subprocesso::after{
-    content:"";
-    position:absolute;
-    inset:6px;
-    border:2px solid rgba(255,255,255,0.18);
-    border-radius:6px;
-    pointer-events:none;
-  }
-
-  /* conector = círculo pequeno */
-  .symbol.conector{
-    background:#9ccc65;border-radius:50%;width:60px;height:60px;display:flex;align-items:center;justify-content:center;font-weight:800;
-    color:#092400;
-  }
-
-  /* hexágono para preparação */
-  .symbol.preparacao{
-    background:#26c6da;clip-path:polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%);
-  }
-
-  .symbol-info{position:absolute;background:rgba(0,0,0,0.85);color:#fff;padding:10px;border-radius:8px;font-size:14px;width:220px;display:none;z-index:50;pointer-events:none;transition:opacity .2s;opacity:0}
+  .symbol.database{background:linear-gradient(180deg,#9575cd,#7e57c2);border-radius:50%/20%;height:70px;width:140px;position:relative}
+  .symbol.database::before{content:"";position:absolute;left:10px;right:10px;top:-12px;height:18px;border-radius:50%;background:rgba(255,255,255,0.12)}
+  .symbol.database::after{content:"";position:absolute;left:10px;right:10px;bottom:-12px;height:18px;border-radius:50%;background:rgba(0,0,0,0.12)}
+  .symbol.subprocesso{background:#ff7043;border-radius:10px;position:relative;padding:4px 6px}
+  .symbol.subprocesso::after{content:"";position:absolute;inset:6px;border:2px solid rgba(255,255,255,0.18);border-radius:6px}
+  .symbol.conector{background:#9ccc65;border-radius:50%;width:60px;height:60px;display:flex;align-items:center;justify-content:center;font-weight:800;color:#092400}
+  .symbol.preparacao{background:#26c6da;clip-path:polygon(25% 0%,75% 0%,100% 50%,75% 100%,25% 100%,0% 50%)}
+  .symbol-info{position:absolute;background:rgba(0,0,0,0.85);color:#fff;padding:10px;border-radius:8px;font-size:14px;width:220px;display:none;z-index:50;pointer-events:none;opacity:0}
   .symbol-info.show{display:block;opacity:1}
-
-  /* linhas/setas: agora são elementos dentro do .step, posicionados por fluxo (relativo ao step) */
-  .arrow{
-    width:4px;height:60px;margin-top:8px;background:#fff;transform:scaleY(0);transform-origin:top;transition:transform .35s ease,background .2s ease,opacity .2s ease;opacity:.25;border-radius:2px;
-  }
+  .arrow{width:4px;height:60px;margin-top:8px;background:#fff;transform:scaleY(0);transform-origin:top;transition:transform .35s,background .2s,opacity .2s;opacity:.25;border-radius:2px}
   .arrow.active{transform:scaleY(1);background:var(--accent);opacity:1}
-
-  #question-area{width:320px;background:rgba(0,0,0,0.55);padding:16px;border-radius:10px;position:relative;top:0;transition:all .3s ease}
+  #question-area{width:320px;background:rgba(0,0,0,0.55);padding:16px;border-radius:10px}
   .question-box{display:none;margin-bottom:16px}
   .question-box p{margin-bottom:12px;font-size:16px}
   .question-box .answer{display:inline-block;padding:8px 14px;margin:6px;border-radius:8px;border:none;background:#1976d2;color:#fff;cursor:pointer}
@@ -131,7 +50,7 @@
 </head>
 <body>
 
-<h1>Quiz do Fluxograma — Corrigido</h1>
+<h1>Quiz do Fluxograma — Local</h1>
 
 <div id="userNameDiv">
   <input type="text" id="userName" placeholder="Digite seu nome">
@@ -143,245 +62,108 @@
   <div id="score">Pontuação: 0</div>
   <div class="container">
     <div class="flowchart">
-      <!-- notas: cada .step está posicionado com top/left (absolute) -->
-      <div class="step" data-id="inicio" style="top:10px; left:110px">
-        <div class="symbol startend" onmouseenter="showTooltip('inicio', event)" onmouseleave="hideTooltip()">Início</div>
-        <div class="arrow"></div>
-      </div>
-
-      <div class="step" data-id="entrada" style="top:120px; left:110px">
-        <div class="symbol input" onmouseenter="showTooltip('entrada', event)" onmouseleave="hideTooltip()">Entrada</div>
-        <div class="arrow"></div>
-      </div>
-
-      <div class="step" data-id="processo" style="top:240px; left:110px">
-        <div class="symbol process" onmouseenter="showTooltip('processo', event)" onmouseleave="hideTooltip()">Processo</div>
-        <div class="arrow"></div>
-      </div>
-
-      <div class="step" data-id="decisao" style="top:360px; left:110px">
-        <div class="symbol decision" onmouseenter="showTooltip('decisao', event)" onmouseleave="hideTooltip()">Decisão</div>
-        <div class="arrow"></div>
-      </div>
-
-      <div class="step" data-id="documento" style="top:480px; left:110px">
-        <div class="symbol document" onmouseenter="showTooltip('documento', event)" onmouseleave="hideTooltip()">Documento</div>
-        <div class="arrow"></div>
-      </div>
-
-      <div class="step" data-id="db" style="top:600px; left:110px">
-        <div class="symbol database" onmouseenter="showTooltip('db', event)" onmouseleave="hideTooltip()">Banco de Dados</div>
-        <div class="arrow"></div>
-      </div>
-
-      <div class="step" data-id="subprocesso" style="top:720px; left:110px">
-        <div class="symbol subprocesso" onmouseenter="showTooltip('subprocesso', event)" onmouseleave="hideTooltip()">Subprocesso</div>
-        <div class="arrow"></div>
-      </div>
-
-      <div class="step" data-id="conector" style="top:840px; left:125px">
-        <div class="symbol conector" onmouseenter="showTooltip('conector', event)" onmouseleave="hideTooltip()">C</div>
-        <div class="arrow"></div>
-      </div>
-
-      <div class="step" data-id="preparacao" style="top:960px; left:110px">
-        <div class="symbol preparacao" onmouseenter="showTooltip('preparacao', event)" onmouseleave="hideTooltip()">Preparação</div>
-        <div class="arrow"></div>
-      </div>
-
-      <div class="step" data-id="fim" style="top:1080px; left:110px">
-        <div class="symbol startend" onmouseenter="showTooltip('fim', event)" onmouseleave="hideTooltip()">Fim</div>
-      </div>
+      <div class="step" data-id="inicio" style="top:10px;left:110px"><div class="symbol startend">Início</div><div class="arrow"></div></div>
+      <div class="step" data-id="entrada" style="top:120px;left:110px"><div class="symbol input">Entrada</div><div class="arrow"></div></div>
+      <div class="step" data-id="processo" style="top:240px;left:110px"><div class="symbol process">Processo</div><div class="arrow"></div></div>
+      <div class="step" data-id="decisao" style="top:360px;left:110px"><div class="symbol decision">Decisão</div><div class="arrow"></div></div>
+      <div class="step" data-id="documento" style="top:480px;left:110px"><div class="symbol document">Documento</div><div class="arrow"></div></div>
+      <div class="step" data-id="db" style="top:600px;left:110px"><div class="symbol database">Banco</div><div class="arrow"></div></div>
+      <div class="step" data-id="subprocesso" style="top:720px;left:110px"><div class="symbol subprocesso">Subprocesso</div><div class="arrow"></div></div>
+      <div class="step" data-id="conector" style="top:840px;left:125px"><div class="symbol conector">C</div><div class="arrow"></div></div>
+      <div class="step" data-id="preparacao" style="top:960px;left:110px"><div class="symbol preparacao">Preparação</div><div class="arrow"></div></div>
+      <div class="step" data-id="fim" style="top:1080px;left:110px"><div class="symbol startend">Fim</div></div>
     </div>
 
-    <div class="symbol-info" id="symbolInfo"></div>
-
     <div id="question-area">
-      <div class="question-box" id="q1"><p>Qual símbolo representa <strong>entrada/saída</strong> de dados?</p>
+      <div class="question-box" id="q1"><p>Qual símbolo representa <strong>entrada/saída</strong>?</p>
         <button class="answer" onclick="checkAnswer('q1','paralelogramo', this)">Paralelogramo</button>
         <button class="answer" onclick="checkAnswer('q1','losango', this)">Losango</button>
         <div class="feedback"></div></div>
-
-      <div class="question-box" id="q2"><p>Qual símbolo é usado para um <strong>processo/ação</strong>?</p>
+      <div class="question-box" id="q2"><p>Qual símbolo é usado para um <strong>processo</strong>?</p>
         <button class="answer" onclick="checkAnswer('q2','retangulo', this)">Retângulo</button>
         <button class="answer" onclick="checkAnswer('q2','circulo', this)">Círculo</button>
         <div class="feedback"></div></div>
-
       <div class="question-box" id="q3"><p>Qual símbolo representa uma <strong>decisão</strong>?</p>
         <button class="answer" onclick="checkAnswer('q3','losango', this)">Losango</button>
         <button class="answer" onclick="checkAnswer('q3','elipse', this)">Elipse</button>
         <div class="feedback"></div></div>
-
       <div class="question-box" id="q4"><p>Qual símbolo indica um <strong>documento</strong>?</p>
         <button class="answer" onclick="checkAnswer('q4','documento', this)">Documento</button>
         <button class="answer" onclick="checkAnswer('q4','processo', this)">Processo</button>
         <div class="feedback"></div></div>
-
       <div class="question-box" id="q5"><p>Qual símbolo indica um <strong>banco de dados</strong>?</p>
         <button class="answer" onclick="checkAnswer('q5','cilindro', this)">Cilindro</button>
         <button class="answer" onclick="checkAnswer('q5','losango', this)">Losango</button>
         <div class="feedback"></div></div>
-
       <div class="question-box" id="q6"><p>Qual símbolo indica um <strong>subprocesso</strong>?</p>
         <button class="answer" onclick="checkAnswer('q6','retangulo-duplo', this)">Retângulo duplo</button>
         <button class="answer" onclick="checkAnswer('q6','paralelogramo', this)">Paralelogramo</button>
         <div class="feedback"></div></div>
-
-      <div class="question-box" id="q7"><p>Qual símbolo é usado como <strong>conector</strong> para ligar partes?</p>
+      <div class="question-box" id="q7"><p>Qual símbolo é usado como <strong>conector</strong>?</p>
         <button class="answer" onclick="checkAnswer('q7','circulo', this)">Círculo</button>
         <button class="answer" onclick="checkAnswer('q7','losango', this)">Losango</button>
         <div class="feedback"></div></div>
-
-      <div class="question-box" id="q8"><p>Qual símbolo é usado para <strong>preparação</strong> ou setup?</p>
+      <div class="question-box" id="q8"><p>Qual símbolo é usado para <strong>preparação</strong>?</p>
         <button class="answer" onclick="checkAnswer('q8','hexagono', this)">Hexágono</button>
         <button class="answer" onclick="checkAnswer('q8','retangulo', this)">Retângulo</button>
         <div class="feedback"></div></div>
-
-      <div class="question-box final" id="finalBox">
-        <h3>🎉 Fim do Quiz</h3>
-        <p id="finalScore"></p>
-        <div id="ranking"></div>
-      </div>
+      <div class="question-box final" id="finalBox"><h3>🎉 Fim do Quiz</h3><p id="finalScore"></p><div id="ranking"></div></div>
     </div>
   </div>
 </div>
 
-<!-- Firebase libs (mantive como estava) -->
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 <script>
-  // Config Firebase (mantido do seu código)
-  const firebaseConfig = {
-    apiKey: "AIzaSyDzUMFgs90Kuh0TDQ8zUT0-10bMnv1CAG8",
-    authDomain: "quiz-fluxograma.firebaseapp.com",
-    databaseURL: "https://quiz-fluxograma-default-rtdb.firebaseio.com",
-    projectId: "quiz-fluxograma",
-    storageBucket: "quiz-fluxograma.appspot.com",
-    messagingSenderId: "535442125816",
-    appId: "1:535442125816:web:998bdad39c50d068885c0d"
-  };
-  firebase.initializeApp(firebaseConfig);
-  const db = firebase.database();
-
-  // Quiz
-  let userName = "";
-  let score = 0;
-  let currentStep = 0;
-  let startTime = 0;
-
-  const steps = ["inicio","entrada","processo","decisao","documento","db","subprocesso","conector","preparacao","fim"];
-  const stepQuestions = {entrada:"q1",processo:"q2",decisao:"q3",documento:"q4",db:"q5",subprocesso:"q6",conector:"q7",preparacao:"q8"};
-  const correct = {q1:"paralelogramo",q2:"retangulo",q3:"losango",q4:"documento",q5:"cilindro",q6:"retangulo-duplo",q7:"circulo",q8:"hexagono"};
+  let userName="",score=0,currentStep=0,startTime=0;
+  const steps=["inicio","entrada","processo","decisao","documento","db","subprocesso","conector","preparacao","fim"];
+  const stepQuestions={entrada:"q1",processo:"q2",decisao:"q3",documento:"q4",db:"q5",subprocesso:"q6",conector:"q7",preparacao:"q8"};
+  const correct={q1:"paralelogramo",q2:"retangulo",q3:"losango",q4:"documento",q5:"cilindro",q6:"retangulo-duplo",q7:"circulo",q8:"hexagono"};
+  let localRanking=[];
 
   function updateScore(){document.getElementById("score").innerText="Pontuação: "+score;}
-
-  function startFlow(){
-    currentStep = 1; // pular 'inicio'
-    startTime = new Date().getTime();
-    nextStep();
-  }
-
+  function startFlow(){currentStep=1;startTime=new Date().getTime();nextStep();}
   function nextStep(){
-    // limpa estilos
     document.querySelectorAll(".symbol").forEach(s=>s.classList.remove("highlight","correct","incorrect"));
     document.querySelectorAll(".arrow").forEach(a=>a.classList.remove("active"));
     document.querySelectorAll(".question-box").forEach(q=>q.style.display="none");
-
-    if(currentStep >= steps.length){ showFinal(); return; }
-
-    const stepId = steps[currentStep];
-    const stepEl = document.querySelector(`.step[data-id='${stepId}'] .symbol`);
-    const arrowEl = document.querySelector(`.step[data-id='${stepId}'] .arrow`);
+    if(currentStep>=steps.length){showFinal();return;}
+    const stepId=steps[currentStep];
+    const stepEl=document.querySelector(`.step[data-id='${stepId}'] .symbol`);
+    const arrowEl=document.querySelector(`.step[data-id='${stepId}'] .arrow`);
     if(stepEl) stepEl.classList.add("highlight");
     if(arrowEl) arrowEl.classList.add("active");
-
     if(stepQuestions[stepId]){
-      const qBox = document.getElementById(stepQuestions[stepId]);
-      qBox.style.display = "block";
+      const qBox=document.getElementById(stepQuestions[stepId]);
+      qBox.style.display="block";
       qBox.querySelectorAll("button").forEach(b=>b.disabled=false);
       qBox.querySelector(".feedback").innerText="";
     }
-
     currentStep++;
   }
-
-  function checkAnswer(qId, ans, btn){
-    const correctAns = correct[qId];
-    const qBox = document.getElementById(qId);
+  function checkAnswer(qId,ans,btn){
+    const correctAns=correct[qId];
+    const qBox=document.getElementById(qId);
     qBox.querySelectorAll("button").forEach(b=>b.disabled=true);
-    const feedback = qBox.querySelector(".feedback");
-    const stepId = Object.keys(stepQuestions).find(k=>stepQuestions[k]===qId);
-    const symbol = document.querySelector(`.step[data-id='${stepId}'] .symbol`);
-    if(ans === correctAns){
-      score++; updateScore(); feedback.innerText="✅ Correto!";
-      if(symbol) symbol.classList.add("correct");
-    } else {
-      feedback.innerText="❌ Incorreto!";
-      if(symbol) symbol.classList.add("incorrect");
-    }
-    setTimeout(()=>{ qBox.style.display="none"; nextStep(); }, 500);
+    const feedback=qBox.querySelector(".feedback");
+    const stepId=Object.keys(stepQuestions).find(k=>stepQuestions[k]===qId);
+    const symbol=document.querySelector(`.step[data-id='${stepId}'] .symbol`);
+    if(ans===correctAns){score++;updateScore();feedback.innerText="✅ Correto!";symbol.classList.add("correct");}
+    else{feedback.innerText="❌ Incorreto!";symbol.classList.add("incorrect");}
+    setTimeout(()=>{qBox.style.display="none";nextStep();},500);
   }
-
   function showFinal(){
-    const total = Object.keys(correct).length;
-    document.getElementById("finalScore").innerText=`${userName}, sua pontuação final: ${score} de ${total}`;
+    const total=Object.keys(correct).length;
+    document.getElementById("finalScore").innerText=`${userName}, sua pontuação: ${score} de ${total}`;
     document.getElementById("finalBox").style.display="block";
-
-    const endTime = new Date().getTime();
-    const duration = Math.floor((endTime-startTime)/1000);
-
-    // salvar no Firebase
-    try {
-      const newRef = db.ref('ranking').push();
-      newRef.set({nome:userName, pontuacao:score, tempo:duration}).then(loadRanking).catch(()=>loadRanking());
-    } catch(e){
-      loadRanking();
-    }
+    const endTime=new Date().getTime();
+    const duration=Math.floor((endTime-startTime)/1000);
+    localRanking.push({nome:userName,pontuacao:score,tempo:duration});
+    localRanking.sort((a,b)=>b.pontuacao-a.pontuacao);
+    document.getElementById("ranking").innerHTML="<strong>🏆 Ranking Local</strong><br>"+localRanking.slice(0,10).map(d=>`${d.nome}: ${d.pontuacao} pts`).join("<br>");
   }
-
-  function loadRanking(){
-    // tenta carregar ranking (se firebase não autorizado, evita erro)
-    try {
-      db.ref('ranking').orderByChild('pontuacao').limitToLast(10).once('value', snap=>{
-        const dados = [];
-        snap.forEach(s=>dados.push(s.val()));
-        dados.sort((a,b)=>b.pontuacao - a.pontuacao);
-        document.getElementById("ranking").innerHTML="<strong>🏆 Ranking Top 10</strong><br>"+dados.map(d=>`${d.nome}: ${d.pontuacao} pts`).join("<br>");
-      });
-    } catch(e){
-      document.getElementById("ranking").innerHTML = "<em>Ranking indisponível</em>";
-    }
-  }
-
-  const infoText = {
-    inicio:"Início do fluxograma",
-    entrada:"Recebe dados do usuário ou sistema",
-    processo:"Etapa de processamento ou ação",
-    decisao:"Ponto de decisão (sim/não)",
-    documento:"Geração ou uso de documento",
-    db:"Banco de dados (cilindro)",
-    subprocesso:"Processo menor dentro do principal (retângulo duplo)",
-    conector:"Conecta partes do fluxograma (conector/círculo)",
-    preparacao:"Setup ou preparação de dados (hexágono)",
-    fim:"Fim do fluxograma"
-  };
-
-  function showTooltip(id, e){
-    const info = document.getElementById("symbolInfo");
-    info.innerText = infoText[id] || "";
-    // posiciona próximo ao símbolo (evita overflow simples)
-    const rect = e.currentTarget.getBoundingClientRect();
-    info.style.top = (rect.top + window.scrollY - 8) + "px";
-    info.style.left = (rect.right + 12) + "px";
-    info.classList.add("show");
-  }
-  function hideTooltip(){ document.getElementById("symbolInfo").classList.remove("show"); }
-
-  document.getElementById("btnStartQuiz").addEventListener("click", ()=>{
-    const input = document.getElementById("userName").value.trim();
-    if(!input){ document.getElementById("nameError").innerText="Digite seu nome!"; return; }
-    userName = input;
-    document.getElementById("nameError").innerText = "";
+  document.getElementById("btnStartQuiz").addEventListener("click",()=>{
+    const input=document.getElementById("userName").value.trim();
+    if(!input){document.getElementById("nameError").innerText="Digite seu nome!";return;}
+    userName=input;
     document.getElementById("userNameDiv").style.display="none";
     document.getElementById("quizContainer").style.display="block";
     startFlow();
