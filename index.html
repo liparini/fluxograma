@@ -18,9 +18,11 @@ button:disabled{opacity:.6;cursor:default}
 .symbol.input{background:#f06292;clip-path:polygon(15% 0,100% 0,85% 100%,0% 100%)}
 .symbol.process{background:#42a5f5}
 .symbol.decision{background:#66bb6a;clip-path:polygon(50% 0,100% 50%,50% 100%,0% 50%)}
-.symbol.document{background:#ffe082;color:#000}
-.symbol.database{background:#9575cd}
-.symbol.subprocess{background:#ff7043;border-radius:14px}
+.symbol.document{background:#ffe082;color:#000;border-radius:4px 4px 20px 4px}
+.symbol.database{background:#9575cd;border-radius:50%/15%;height:70px}
+.symbol.subprocesso{background:#ff7043;border:4px double #fff}
+.symbol.conector{background:#9ccc65;border-radius:50%;width:60px;height:60px}
+.symbol.preparacao{background:#26c6da;clip-path:polygon(25% 0%, 75% 0%, 100% 50%, 75% 100%, 25% 100%, 0 50%)}
 .symbol-info{position:absolute;background:rgba(0,0,0,0.85);color:#fff;padding:10px;border-radius:8px;font-size:14px;width:220px;display:none;z-index:10;pointer-events:none;transition:opacity 0.3s;opacity:0}
 .symbol-info.show{display:block;opacity:1}
 #question-area{width:300px;background:rgba(0,0,0,0.55);padding:16px;border-radius:10px;position:relative;top:0;transition:all .3s ease}
@@ -32,7 +34,7 @@ button:disabled{opacity:.6;cursor:default}
 .final{background:linear-gradient(90deg,#263238,#37474f);padding:18px;border-radius:10px;text-align:center;margin-top:20px}
 #ranking{margin-top:10px;text-align:center}
 #score{font-weight:600;margin:10px 0}
-.arrow{width:2px;height:50px;background:#fff;position:absolute;top:60px;left:50%;transform:translateX(-50%) scaleY(0);transform-origin:top;transition:transform .5s ease,background .3s ease,opacity .3s ease;opacity:.3}
+.arrow{width:2px;height:80px;background:#fff;position:absolute;top:70px;left:50%;transform:translateX(-50%) scaleY(0);transform-origin:top;transition:transform .5s ease,background .3s ease,opacity .3s ease;opacity:.3}
 .arrow.active{opacity:1;background:#ffeb3b;transform:translateX(-50%) scaleY(1)}
 @media(max-width:800px){.container{flex-direction:column;align-items:center}.flowchart{width:90%}}
 </style>
@@ -53,15 +55,15 @@ button:disabled{opacity:.6;cursor:default}
   <div class="container">
     <div class="flowchart">
       <div class="step" data-id="inicio" style="top:0; left:110px"><div class="symbol startend" onmouseenter="showTooltip('inicio', event)" onmouseleave="hideTooltip()">Início</div><div class="arrow"></div></div>
-      <div class="step" data-id="entrada" style="top:80px; left:110px"><div class="symbol input" onmouseenter="showTooltip('entrada', event)" onmouseleave="hideTooltip()">Entrada</div><div class="arrow"></div></div>
-      <div class="step" data-id="processo" style="top:160px; left:110px"><div class="symbol process" onmouseenter="showTooltip('processo', event)" onmouseleave="hideTooltip()">Processo</div><div class="arrow"></div></div>
-      <div class="step" data-id="decisao" style="top:240px; left:110px"><div class="symbol decision" onmouseenter="showTooltip('decisao', event)" onmouseleave="hideTooltip()">Decisão</div><div class="arrow"></div></div>
-      <div class="step" data-id="documento" style="top:320px; left:110px"><div class="symbol document" onmouseenter="showTooltip('documento', event)" onmouseleave="hideTooltip()">Documento</div><div class="arrow"></div></div>
-      <div class="step" data-id="db" style="top:400px; left:110px"><div class="symbol database" onmouseenter="showTooltip('db', event)" onmouseleave="hideTooltip()">Banco de Dados</div><div class="arrow"></div></div>
-      <div class="step" data-id="subprocesso" style="top:480px; left:110px"><div class="symbol subprocess" onmouseenter="showTooltip('subprocesso', event)" onmouseleave="hideTooltip()">Subprocesso</div><div class="arrow"></div></div>
-      <div class="step" data-id="conector" style="top:560px; left:110px"><div class="symbol process" onmouseenter="showTooltip('conector', event)" onmouseleave="hideTooltip()">Conector</div><div class="arrow"></div></div>
-      <div class="step" data-id="preparacao" style="top:640px; left:110px"><div class="symbol process" onmouseenter="showTooltip('preparacao', event)" onmouseleave="hideTooltip()">Preparação</div><div class="arrow"></div></div>
-      <div class="step" data-id="fim" style="top:720px; left:110px"><div class="symbol startend" onmouseenter="showTooltip('fim', event)" onmouseleave="hideTooltip()">Fim</div></div>
+      <div class="step" data-id="entrada" style="top:100px; left:110px"><div class="symbol input" onmouseenter="showTooltip('entrada', event)" onmouseleave="hideTooltip()">Entrada</div><div class="arrow"></div></div>
+      <div class="step" data-id="processo" style="top:200px; left:110px"><div class="symbol process" onmouseenter="showTooltip('processo', event)" onmouseleave="hideTooltip()">Processo</div><div class="arrow"></div></div>
+      <div class="step" data-id="decisao" style="top:300px; left:110px"><div class="symbol decision" onmouseenter="showTooltip('decisao', event)" onmouseleave="hideTooltip()">Decisão</div><div class="arrow"></div></div>
+      <div class="step" data-id="documento" style="top:400px; left:110px"><div class="symbol document" onmouseenter="showTooltip('documento', event)" onmouseleave="hideTooltip()">Documento</div><div class="arrow"></div></div>
+      <div class="step" data-id="db" style="top:500px; left:110px"><div class="symbol database" onmouseenter="showTooltip('db', event)" onmouseleave="hideTooltip()">Banco de Dados</div><div class="arrow"></div></div>
+      <div class="step" data-id="subprocesso" style="top:600px; left:110px"><div class="symbol subprocesso" onmouseenter="showTooltip('subprocesso', event)" onmouseleave="hideTooltip()">Subprocesso</div><div class="arrow"></div></div>
+      <div class="step" data-id="conector" style="top:700px; left:125px"><div class="symbol conector" onmouseenter="showTooltip('conector', event)" onmouseleave="hideTooltip()">C</div><div class="arrow"></div></div>
+      <div class="step" data-id="preparacao" style="top:820px; left:110px"><div class="symbol preparacao" onmouseenter="showTooltip('preparacao', event)" onmouseleave="hideTooltip()">Preparação</div><div class="arrow"></div></div>
+      <div class="step" data-id="fim" style="top:940px; left:110px"><div class="symbol startend" onmouseenter="showTooltip('fim', event)" onmouseleave="hideTooltip()">Fim</div></div>
     </div>
     <div class="symbol-info" id="symbolInfo"></div>
 
@@ -144,7 +146,7 @@ const correct = {q1:"paralelogramo",q2:"retangulo",q3:"losango",q4:"documento",q
 function updateScore(){document.getElementById("score").innerText="Pontuação: "+score;}
 
 function startFlow(){
-  currentStep = 1; // começa no primeiro step com pergunta
+  currentStep = 1;
   startTime = new Date().getTime();
   nextStep();
 }
@@ -181,7 +183,7 @@ function checkAnswer(qId, ans, btn){
   const symbol = document.querySelector(`.step[data-id='${stepId}'] .symbol`);
   if(ans === correctAns){score++;updateScore();feedback.innerText="✅ Correto!";if(symbol) symbol.classList.add("correct");}
   else{feedback.innerText="❌ Incorreto!";if(symbol) symbol.classList.add("incorrect");}
-  setTimeout(()=>{qBox.style.display="none";nextStep();},300);
+  setTimeout(()=>{qBox.style.display="none";nextStep();},500);
 }
 
 function showFinal(){
@@ -192,7 +194,6 @@ function showFinal(){
   const endTime = new Date().getTime();
   const duration = Math.floor((endTime-startTime)/1000);
 
-  // salvar no Firebase
   const newRef = db.ref('ranking').push();
   newRef.set({nome:userName, pontuacao:score, tempo:duration}).then(loadRanking);
 }
