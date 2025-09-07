@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Quiz Fluxograma - Ranking Global</title>
+<style>
+body{margin:16px;font-family:Arial,sans-serif;background:#1e1e2f;color:#fff}
+h1{text-align:center;color:#ffeb3b;margin-bottom:20px}
+#userNameDiv{text-align:center;margin-bottom:20px}
+#userName{padding:8px 12px;border-radius:6px;border:none;margin-right:8px;width:200px}
+button{padding:8px 12px;margin:4px;border:none;border-radius:6px;background:#2196f3;color:#fff;cursor:pointer}
+button:disabled{opacity:.6;cursor:default}
+.container{display:flex;justify-content:center;align-items:flex-start;gap:20px}
+.flowchart{width:360px;position:relative;border-radius:8px;padding:12px;background:#2c2c3c}
+.symbol{width:140px;height:60px;display:flex;align-items:center;justify-content:center;font-weight:700;border-radius:10px;color:#fff;position:relative;z-index:1;cursor:pointer}
+.symbol.startend{background:#ff9800;border-radius:36px}
+.symbol.input{background:#f06292;clip-path:polygon(15% 0,100% 0,85% 100%,0% 100%)}
+.symbol.process{background:#42a5f5}
+.symbol.decision{background:#66bb6a;clip-path:polygon(50% 0,100% 50%,50% 100%,0% 50%)}
+.symbol.document{background:#ffe082;color:#000}
+.symbol.database{background:#9575cd}
+.symbol.subprocess{background:#ff7043;border-radius:14px}
+.symbol-info{position:absolute;background:rgba(0,0,0,0.85);color:#fff;padding:10px;border-radius:8px;font-size:14px;width:220px;display:none;z-index:10;pointer-events:none;transition:opacity 0.3s;opacity:0}
+.symbol-info.show{display:block;opacity:1}
+#question-area{width:300px;background:rgba(0,0,0,0.55);padding:16px;border-radius:10px;position:relative;top:0;transition:all .3s ease}
+.question-box{display:none;margin-bottom:16px}
+.question-box p{margin-bottom:12px;font-size:16px}
+.question-box .answer{display:inline-block;padding:8px 14px;margin:6px;border-radius:8px;border:none;background:#1976d2;color:#fff;cursor:pointer}
+.question-box .answer:disabled{opacity:.6;cursor:default}
+.feedback{margin-top:10px;font-weight:700;font-size:15px}
+.final{background:linear-gradient(90deg,#263238,#37474f);padding:18px;border-radius:10px;text-align:center;margin-top:20px}
+#ranking{margin-top:10px;text-align:center}
+@media(max-width:800px){.container{flex-direction:column;align-items:center}.flowchart{width:90%}}
+</style>
+</head>
+<body>
+
+<h1>Quiz do Fluxograma</h1>
+
+<!-- Nome do usuário -->
+<div id="userNameDiv">
+  <input type="text" id="userName" placeholder="Digite seu nome">
+  <button onclick="startQuiz()">Iniciar Quiz</button>
+  <p id="nameError" style="color:red;"></p>
+</div>
+
+<div id="quizContainer" style="display:none">
+  <div class="controls">
+    <button onclick="resetFlow()">🔄 Resetar</button>
+  </div>
+  <div id="score">Pontuação: 0</div>
+  <div class="container">
+    <div class="flowchart" aria-hidden="true">
+      <div class="step" data-id="inicio" style="top:0; left:110px"><div class="symbol startend" onmouseenter="showTooltip('inicio', event)" onmouseleave="hideTooltip()">Início</div></div>
+      <div class="step" data-id="entrada" style="top:80px; left:110px"><div class="symbol input" onmouseenter="showTooltip('entrada', event)" onmouseleave="hideTooltip()">Entrada</div></div>
+      <div class="step" data-id="processo" style="top:160px; left:110px"><div class="symbol process" onmouseenter="showTooltip('processo', event)" onmouseleave="hideTooltip()">Processo</div></div>
+      <div class="step" data-id="decisao" style="top:240px; left:110px"><div class="symbol decision" onmouseenter="showTooltip('decisao', event)" onmouseleave="hideTooltip()">Decisão</div></div>
+      <div class="step" data-id="documento" style="top:320px; left:110px"><div class="symbol document" onmouseenter="showTooltip('documento', event)" onmouseleave="hideTooltip()">Documento</div></div>
+      <div class="step" data-id="db" style="top:400px; left:110px"><div class="symbol database" onmouseenter="showTooltip('db', event)" onmouseleave="hideTooltip()">Banco de Dados</div></div>
+      <div class="step" data-id="subprocesso" style="top:480px; left:110px"><div class="symbol subprocess" onmouseenter="showTooltip('subprocesso', event)" onmouseleave="hideTooltip()">Subprocesso</div></div>
+      <div class="step" data-id="conector" style="top:560px; left:110px"><div class="symbol process" onmouseenter="showTooltip('conector', event)" onmouseleave="hideTooltip()">Conector</div></div>
+      <div class="step" data-id="preparacao" style="top:640px; left:110px"><div class="symbol process" onmouseenter="showTooltip('preparacao', event)" onmouseleave="hideTooltip()">Preparação</div></div>
+      <div class="step" data-id="fim" style="top:720px; left:110px"><div class="symbol startend" onmouseenter="showTooltip('fim', event)" onmouseleave="hideTooltip()">Fim</div></div>
+    </div>
+    <div class="symbol-info" id="symbolInfo"></div>
+
+    <div id="question-area">
+      <!-- Perguntas do quiz -->
+      <div class="question-box" id="q1"><p>Qual símbolo representa <strong>entrada/saída</strong> de dados?</p>
+        <button class="answer" onclick="checkAnswer('q1','paralelogramo', this)">Paralelogramo</button>
+        <button class="answer" onclick="checkAnswer('q1','losango', this)">Losango</button>
+        <div class="feedback"></div>
+      </div>
+      <div class="question-box" id="q2"><p>Qual símbolo é usado para um <strong>processo/ação</strong>?</p>
+        <button class="answer" onclick="checkAnswer('q2','retangulo', this)">Retângulo</button>
+        <button class="answer" onclick="checkAnswer('q2','circulo', this)">Círculo</button>
+        <div class="feedback"></div>
+      </div>
+      <!-- Outras perguntas podem ser adicionadas aqui igual ao código anterior -->
+
+      <div class="question-box final" id="finalBox">
+        <h3>🎉 Fim do Quiz</h3>
+        <p id="finalScore"></p>
+        <div id="ranking"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Firebase SDK -->
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
+import { getDatabase, ref, push, get, query, orderByChild } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+
+// Config Firebase
+const firebaseConfig = {
+  apiKey: "AIzaSyDzUMFgs90Kuh0TDQ8zUT0-10bMnv1CAG8",
+  authDomain: "quiz-fluxograma.firebaseapp.com",
+  databaseURL: "https://quiz-fluxograma-default-rtdb.firebaseio.com",
+  projectId: "quiz-fluxograma",
+  storageBucket: "quiz-fluxograma.appspot.com",
+  messagingSenderId: "535442125816",
+  appId: "1:535442125816:web:998bdad39c50d068885c0d"
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+
+// Quiz variables
+let score = 0;
+let currentStep = 1;
+let startTime, userName;
+
+const steps = ["inicio","entrada","processo","decisao","documento","db","subprocesso","conector","preparacao","fim"];
+const stepQuestions = {entrada:"q1",processo:"q2"};
+const correct = {q1:"paralelogramo", q2:"retangulo"};
+
+// Funções básicas
+function updateScore(){document.getElementById("score").innerText="Pontuação: "+score;}
+function startFlow(){currentStep=1;highlightNext();}
+function nextStep(){currentStep++;highlightNext();}
+function highlightNext(){
+  document.querySelectorAll(".symbol").forEach(s=>s.classList.remove("highlight","correct","incorrect"));
+  if(currentStep>=steps.length) return;
+  const stepId=steps[currentStep];
+  const stepEl=document.querySelector(`.step[data-id='${stepId}'] .symbol`);
+  if(stepEl) stepEl.classList.add("highlight");
+  document.querySelectorAll(".question-box").forEach(q=>q.style.display="none");
+  if(stepQuestions[stepId]){
+    const qBox=document.getElementById(stepQuestions[stepId]);
+    qBox.style.display="block";
+    qBox.querySelectorAll("button").forEach(b=>b.disabled=false);
+    qBox.querySelector(".feedback").innerText="";
+  }
+  if(stepId==="fim") showFinal();
+}
+function checkAnswer(qId,ans,btn){
+  const correctAns=correct[qId];
+  const qBox=document.getElementById(qId);
+  qBox.querySelectorAll("button").forEach(b=>b.disabled=true);
+  const feedback=qBox.querySelector(".feedback");
+  if(ans===correctAns){score++;updateScore();feedback.innerText="✅ Correto!";}
+  else{feedback.innerText="❌ Incorreto!";}
+  setTimeout(()=>{qBox.style.display="none";nextStep();},300);
+}
+function resetFlow(){
+  score=0;updateScore();currentStep=1;
+  document.querySelectorAll(".symbol").forEach(s=>s.classList.remove("highlight","correct","incorrect"));
+  document.querySelectorAll(".question-box").forEach(q=>q.style.display="none");
+  document.getElementById("finalBox").style.display="none";
+  startTime = new Date().getTime();
+}
+
+// Nome obrigatório
+function startQuiz(){
+  const nameInput = document.getElementById("userName").value.trim();
+  if(!nameInput){document.getElementById("nameError").innerText="Nome obrigatório!"; return;}
+  userName=nameInput;
+  document.getElementById("nameError").innerText="";
+  document.getElementById("userNameDiv").style.display="none";
+  document.getElementById("quizContainer").style.display="block";
+  startTime = new Date().getTime();
+  startFlow();
+}
+
+// Tooltip
+const tooltip = document.getElementById("symbolInfo");
+function showTooltip(simboloId, event){
+  const info = {
+    inicio:{titulo:"Início/Fim",descricao:"Indica o ponto inicial ou final do fluxograma.",exemplo:"Ex: Início do processo."},
+    entrada:{titulo:"Entrada/Paralelogramo",descricao:"Representa entrada/saída de dados.",exemplo:"Ex: Digitar nome do usuário."},
+    processo:{titulo:"Processo/Retângulo",descricao:"Representa ação.",exemplo:"Ex: Calcular média."},
+    decisao:{titulo:"Decisão/Losango",descricao:"Representa decisão.",exemplo:"Ex: Usuário cadastrado?"},
+    documento:{titulo:"Documento",descricao:"Indica documento.",exemplo:"Ex: Gerar relatório."},
+    db:{titulo:"Banco de Dados/Cilindro",descricao:"Indica armazenamento.",exemplo:"Ex: Salvar usuário."},
+    subprocesso:{titulo:"Subprocesso",descricao:"Subprocesso.",exemplo:"Ex: Validar dados."},
+    conector:{titulo:"Conector",descricao:"Liga partes do fluxograma.",exemplo:"Ex: Continuar fluxo."},
+    preparacao:{titulo:"Preparação/Hexágono",descricao:"Preparação.",exemplo:"Ex: Preparar sistema."},
+    fim:{titulo:"Fim",descricao:"Final do processo.",exemplo:"Ex: Fim do cadastro."}
+  }[simboloId];
+  tooltip.innerHTML=`<strong>${info.titulo}</strong><br>${info.descricao}<br><em>${info.exemplo}</em>`;
+  const rect=event.target.getBoundingClientRect();
+  tooltip.style.top=(rect.top+window.scrollY)+"px";
+  tooltip.style.left=(rect.right+10+window.scrollX)+"px";
+  tooltip.classList.add("show");
+}
+function hideTooltip(){tooltip.classList.remove("show");}
+
+// Ranking Firebase
+function showFinal(){
+  const endTime = new Date().getTime();
+  const tempo = Math.floor((endTime - startTime)/1000);
+  document.getElementById("finalScore").innerText=`Sua pontuação final: ${score}`;
+  document.getElementById("finalBox").style.display="block";
+
+  // Salvar no Firebase
+  const pontRef = ref(db,'ranking');
+  push(pontRef,{nome:userName,pontuacao:score,tempo:tempo,timestamp:Date.now()});
+
+  // Mostrar top 10
+  const rankingDiv = document.getElementById("ranking");
+  get(ref(db,'ranking')).then(snapshot=>{
+    if(snapshot.exists()){
+      const dados = Object.values(snapshot.val())
+        .sort((a,b)=>b.pontuacao - a.pontuacao)
+        .slice(0,10);
+      rankingDiv.innerHTML="<h4>🏆 Ranking Global</h4>"+dados.map((u,i)=>`${i+1}. ${u.nome} - ${u.pontuacao} pts (${u.tempo}s)`).join("<br>");
+    }
+  });
+}
+</script>
+</body>
+</html>
