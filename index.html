@@ -78,10 +78,11 @@ button:disabled{opacity:.6;cursor:default}
   </div>
 </div>
 
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-app.js";
-import { getDatabase, ref, push, get } from "https://www.gstatic.com/firebasejs/9.23.0/firebase-database.js";
+<!-- Firebase compatível CDN -->
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
 
+<script>
 const firebaseConfig = {
   apiKey: "AIzaSyDzUMFgs90Kuh0TDQ8zUT0-10bMnv1CAG8",
   authDomain: "quiz-fluxograma.firebaseapp.com",
@@ -91,9 +92,8 @@ const firebaseConfig = {
   messagingSenderId: "535442125816",
   appId: "1:535442125816:web:998bdad39c50d068885c0d"
 };
-
-const app = initializeApp(firebaseConfig);
-const db = getDatabase(app);
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
 
 let score=0, currentStep=1, startTime, userName;
 const steps=["inicio","entrada","processo","decisao","documento","db","subprocesso","conector","preparacao","fim"];
@@ -127,20 +127,6 @@ function checkAnswer(qId,ans,btn){
   else{feedback.innerText="❌ Incorreto!";}
   setTimeout(()=>{qBox.style.display="none";nextStep();},300);
 }
-function resetFlow(){score=0;updateScore();currentStep=1;document.querySelectorAll(".symbol").forEach(s=>s.classList.remove("highlight"));document.querySelectorAll(".question-box").forEach(q=>q.style.display="none");document.getElementById("finalBox").style.display="none";startTime=new Date().getTime();}
-
-document.getElementById('btnStartQuiz').addEventListener('click', startQuiz);
-
-function startQuiz(){
-  const nameInput=document.getElementById("userName").value.trim();
-  if(!nameInput){document.getElementById("nameError").innerText="Nome obrigatório!"; return;}
-  userName=nameInput;
-  document.getElementById("nameError").innerText="";
-  document.getElementById("userNameDiv").style.display="none";
-  document.getElementById("quizContainer").style.display="block";
-  startTime=new Date().getTime();
-  startFlow();
-}
 
 const tooltip=document.getElementById("symbolInfo");
 function showTooltip(id,e){
@@ -170,17 +156,35 @@ function showFinal(){
   document.getElementById("finalScore").innerText=`Sua pontuação final: ${score}`;
   document.getElementById("finalBox").style.display="block";
 
-  const pontRef = ref(db,'ranking');
-  push(pontRef,{nome:userName,pontuacao:score,tempo:tempo,timestamp:Date.now()});
+  db.ref('ranking').push({nome:userName,pontuacao:score,tempo:tempo,timestamp:Date.now()});
 
-  get(ref(db,'ranking')).then(snapshot=>{
+  db.ref('ranking').once('value', snapshot => {
     if(snapshot.exists()){
-      const dados=Object.values(snapshot.val()).sort((a,b)=>b.pontuacao-a.pontuacao).slice(0,10);
-      const rankingDiv=document.getElementById("ranking");
-      rankingDiv.innerHTML="<h4>🏆 Ranking Global</h4>"+dados.map((u,i)=>`${i+1}. ${u.nome} - ${u.pontuacao} pts (${u.tempo}s)`).join("<br>");
+      const dados = Object.values(snapshot.val())
+        .sort((a,b)=>b.pontuacao-a.pontuacao)
+        .slice(0,10);
+      document.getElementById("ranking").innerHTML = "<h4>🏆 Ranking Global</h4>" + 
+        dados.map((u,i)=>`${i+1}. ${u.nome} - ${u.pontuacao} pts (${u.tempo}s)`).join("<br>");
     }
   });
 }
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  document.getElementById('btnStartQuiz').addEventListener('click', function() {
+    const nome = document.getElementById("userName").value.trim();
+    if(!nome){
+      document.getElementById("nameError").innerText = "Nome obrigatório!";
+      return;
+    }
+    userName = nome;
+    document.getElementById("nameError").innerText = "";
+    document.getElementById("userNameDiv").style.display = "none";
+    document.getElementById("quizContainer").style.display = "block";
+    startFlow();
+    startTime = new Date().getTime();
+  });
+});
 </script>
 
 </body>
